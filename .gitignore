@@ -106,3 +106,7 @@ wp-config.php.backup
 
 # Plugin ZIP files (development builds)
 ai-decision-cards_*.zip
+
+# Claude Code settings
+.claude/
+.claude/settings.local.json
