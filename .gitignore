@@ -1,0 +1,108 @@
+# WordPress Core Files
+/wp-admin/
+/wp-includes/
+/wp-content/uploads/
+/wp-content/cache/
+/wp-content/upgrade/
+/wp-content/backup-db/
+/wp-content/advanced-cache.php
+/wp-content/wp-cache-config.php
+/wp-config.php
+/wp-load.php
+/wp-blog-header.php
+/wp-*.php
+/xmlrpc.php
+/readme.html
+/license.txt
+
+# WordPress Config
+wp-config-local.php
+wp-config-production.php
+wp-config-staging.php
+
+# Database
+*.sql
+*.mysql
+*.sqlite
+
+# Logs
+*.log
+error_log
+debug.log
+wp-content/debug.log
+
+# Cache
+*.cache
+/wp-content/cache/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.buildpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Node.js (if using build tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Build tools
+/build/
+/dist/
+/assets/build/
+
+# Composer (PHP dependency manager)
+/vendor/
+composer.lock
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.staging
+
+# Backup files
+*.bak
+*.backup
+
+# Plugin/Theme specific
+*.zip
+*.tar.gz
+*.tar.bz2
+
+# OS generated files
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Security
+.htaccess.backup
+wp-config.php.backup
+
+# Plugin development
+/tests/coverage/
+/phpunit.xml
+/.phpunit.result.cache
+
+# Generated documentation
+/docs/build/
+/docs/_build/
+
+# Plugin ZIP files (development builds)
+ai-decision-cards_*.zip
