@@ -221,27 +221,19 @@ class AIDC_Plugin {
 	 * @since 1.0.0
 	 */
 	public function register_admin_pages() {
-		add_menu_page(
-			__( 'Decision Cards', 'ai-decision-cards' ),
-			__( 'Decision Cards', 'ai-decision-cards' ),
-			'edit_posts',
-			'aidc_decisions',
-			array( $this, 'render_generate_page' ),
-			'dashicons-yes-alt',
-			25
-		);
-
+		// Add Generate page as submenu under the Decision Cards post type menu
 		add_submenu_page(
-			'aidc_decisions',
+			'edit.php?post_type=decision_card',
 			__( 'Generate from Conversation', 'ai-decision-cards' ),
-			__( 'Generate', 'ai-decision-cards' ),
+			__( 'Generate from Conversation', 'ai-decision-cards' ),
 			'edit_posts',
-			'aidc_decisions',
+			'aidc_generate',
 			array( $this, 'render_generate_page' )
 		);
 
+		// Add Settings page as submenu under the Decision Cards post type menu
 		add_submenu_page(
-			'aidc_decisions',
+			'edit.php?post_type=decision_card',
 			__( 'Settings', 'ai-decision-cards' ),
 			__( 'Settings', 'ai-decision-cards' ),
 			'manage_options',
@@ -517,15 +509,25 @@ class AIDC_Plugin {
         $this->redirect_with_notice('Draft created (ID ' . intval($post_id) . ').', 'success');
     }
 
-    private function redirect_with_notice($msg, $type='success') {
-        $url = add_query_arg([
-            'page' => 'aidc_decisions',
-            'aidc_notice' => rawurlencode($msg),
-            'aidc_type' => $type
-        ], admin_url('admin.php'));
-        wp_redirect($url);
-        exit;
-    }
+	/**
+	 * Redirect with notice message.
+	 *
+	 * @since 1.0.0
+	 * @param string $msg  The notice message.
+	 * @param string $type The notice type (success, error, warning, info).
+	 */
+	private function redirect_with_notice( $msg, $type = 'success' ) {
+		$url = add_query_arg(
+			array(
+				'page'        => 'aidc_generate',
+				'aidc_notice' => rawurlencode( $msg ),
+				'aidc_type'   => $type,
+			),
+			admin_url( 'edit.php?post_type=decision_card' )
+		);
+		wp_redirect( $url );
+		exit;
+	}
 }
 
 /**
