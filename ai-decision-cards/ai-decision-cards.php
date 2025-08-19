@@ -37,6 +37,7 @@ class AIDC_Plugin {
 	/**
 	 * Plugin option names.
 	 */
+	const OPTION_API_TYPE = 'aidc_api_type';
 	const OPTION_API_KEY  = 'aidc_openai_api_key';
 	const OPTION_API_BASE = 'aidc_openai_api_base';
 	const OPTION_MODEL    = 'aidc_openai_model';
@@ -89,6 +90,9 @@ class AIDC_Plugin {
 	 */
 	public function on_activate() {
 		// Set default options.
+		if ( ! get_option( self::OPTION_API_TYPE ) ) {
+			update_option( self::OPTION_API_TYPE, 'openai' );
+		}
 		if ( ! get_option( self::OPTION_API_BASE ) ) {
 			update_option( self::OPTION_API_BASE, 'https://api.openai.com/' );
 		}
@@ -266,6 +270,9 @@ class AIDC_Plugin {
 
 		$saved = false;
 		if ( isset( $_POST['aidc_settings_nonce'] ) && wp_verify_nonce( $_POST['aidc_settings_nonce'], 'aidc_save_settings' ) ) {
+			if ( isset( $_POST['aidc_api_type'] ) ) {
+				update_option( self::OPTION_API_TYPE, sanitize_text_field( wp_unslash( $_POST['aidc_api_type'] ) ) );
+			}
 			if ( isset( $_POST['aidc_api_key'] ) ) {
 				update_option( self::OPTION_API_KEY, sanitize_text_field( wp_unslash( $_POST['aidc_api_key'] ) ) );
 			}
@@ -294,40 +301,58 @@ class AIDC_Plugin {
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row">
-							<label for="aidc_api_key"><?php esc_html_e( 'OpenAI-compatible API Key', 'ai-decision-cards' ); ?></label>
+							<label for="aidc_api_type"><?php esc_html_e( 'API Type', 'ai-decision-cards' ); ?></label>
+						</th>
+						<td>
+							<select id="aidc_api_type" name="aidc_api_type" onchange="toggleApiFields()">
+								<option value="openai" <?php selected( $this->esc_attr_val( self::OPTION_API_TYPE, 'openai' ), 'openai' ); ?>>
+									<?php esc_html_e( 'OpenAI Compatible', 'ai-decision-cards' ); ?>
+								</option>
+								<option value="azure" <?php selected( $this->esc_attr_val( self::OPTION_API_TYPE, 'openai' ), 'azure' ); ?>>
+									<?php esc_html_e( 'Azure OpenAI', 'ai-decision-cards' ); ?>
+								</option>
+							</select>
+							<p class="description">
+								<?php esc_html_e( 'Choose your AI service provider.', 'ai-decision-cards' ); ?>
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="aidc_api_key"><span id="api_key_label"><?php esc_html_e( 'API Key', 'ai-decision-cards' ); ?></span></label>
 						</th>
 						<td>
 							<input type="password" id="aidc_api_key" name="aidc_api_key" 
 								   value="<?php echo $this->esc_attr_val( self::OPTION_API_KEY ); ?>" 
 								   class="regular-text" />
-							<p class="description">
-								<?php esc_html_e( 'Your API key for OpenAI or OpenRouter.', 'ai-decision-cards' ); ?>
+							<p class="description" id="api_key_desc">
+								<?php esc_html_e( 'Your API key for OpenAI, OpenRouter, or other compatible services.', 'ai-decision-cards' ); ?>
 							</p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="aidc_api_base"><?php esc_html_e( 'API Base URL', 'ai-decision-cards' ); ?></label>
+							<label for="aidc_api_base"><span id="api_base_label"><?php esc_html_e( 'API Base URL', 'ai-decision-cards' ); ?></span></label>
 						</th>
 						<td>
 							<input type="text" id="aidc_api_base" name="aidc_api_base" 
 								   value="<?php echo $this->esc_attr_val( self::OPTION_API_BASE, 'https://api.openai.com/' ); ?>" 
 								   class="regular-text" />
-							<p class="description">
-								<?php esc_html_e( 'Example: https://api.openai.com/ or your OpenRouter-compatible base.', 'ai-decision-cards' ); ?>
+							<p class="description" id="api_base_desc">
+								<?php esc_html_e( 'Example: https://api.openai.com/ or https://openrouter.ai/api/v1/', 'ai-decision-cards' ); ?>
 							</p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="aidc_model"><?php esc_html_e( 'Model', 'ai-decision-cards' ); ?></label>
+							<label for="aidc_model"><span id="model_label"><?php esc_html_e( 'Model', 'ai-decision-cards' ); ?></span></label>
 						</th>
 						<td>
 							<input type="text" id="aidc_model" name="aidc_model" 
 								   value="<?php echo $this->esc_attr_val( self::OPTION_MODEL, 'gpt-3.5-turbo' ); ?>" 
 								   class="regular-text" />
-							<p class="description">
-								<?php esc_html_e( 'Default: gpt-3.5-turbo. Any OpenAI-compatible chat model is fine.', 'ai-decision-cards' ); ?>
+							<p class="description" id="model_desc">
+								<?php esc_html_e( 'Example: gpt-3.5-turbo, gpt-4, claude-3-haiku, etc.', 'ai-decision-cards' ); ?>
 							</p>
 						</td>
 					</tr>
@@ -335,6 +360,38 @@ class AIDC_Plugin {
 				<?php submit_button( __( 'Save Settings', 'ai-decision-cards' ) ); ?>
 			</form>
 		</div>
+		<script type="text/javascript">
+		function toggleApiFields() {
+			const apiType = document.getElementById('aidc_api_type').value;
+			const apiKeyLabel = document.getElementById('api_key_label');
+			const apiKeyDesc = document.getElementById('api_key_desc');
+			const apiBaseLabel = document.getElementById('api_base_label');
+			const apiBaseDesc = document.getElementById('api_base_desc');
+			const modelLabel = document.getElementById('model_label');
+			const modelDesc = document.getElementById('model_desc');
+			
+			if (apiType === 'azure') {
+				apiKeyLabel.textContent = '<?php esc_attr_e( "Azure OpenAI API Key", "ai-decision-cards" ); ?>';
+				apiKeyDesc.textContent = '<?php esc_attr_e( "Your Azure OpenAI API key from Azure portal.", "ai-decision-cards" ); ?>';
+				apiBaseLabel.textContent = '<?php esc_attr_e( "Azure Endpoint", "ai-decision-cards" ); ?>';
+				apiBaseDesc.textContent = '<?php esc_attr_e( "Example: https://your-resource.openai.azure.com/", "ai-decision-cards" ); ?>';
+				modelLabel.textContent = '<?php esc_attr_e( "Deployment Name", "ai-decision-cards" ); ?>';
+				modelDesc.textContent = '<?php esc_attr_e( "Your Azure OpenAI deployment name (e.g. gpt-35-turbo).", "ai-decision-cards" ); ?>';
+			} else {
+				apiKeyLabel.textContent = '<?php esc_attr_e( "API Key", "ai-decision-cards" ); ?>';
+				apiKeyDesc.textContent = '<?php esc_attr_e( "Your API key for OpenAI, OpenRouter, or other compatible services.", "ai-decision-cards" ); ?>';
+				apiBaseLabel.textContent = '<?php esc_attr_e( "API Base URL", "ai-decision-cards" ); ?>';
+				apiBaseDesc.textContent = '<?php esc_attr_e( "Example: https://api.openai.com/ or https://openrouter.ai/api/v1/", "ai-decision-cards" ); ?>';
+				modelLabel.textContent = '<?php esc_attr_e( "Model", "ai-decision-cards" ); ?>';
+				modelDesc.textContent = '<?php esc_attr_e( "Example: gpt-3.5-turbo, gpt-4, claude-3-haiku, etc.", "ai-decision-cards" ); ?>';
+			}
+		}
+		
+		// Initialize on page load
+		document.addEventListener('DOMContentLoaded', function() {
+			toggleApiFields();
+		});
+		</script>
 		<?php
 	}
 
@@ -420,6 +477,7 @@ class AIDC_Plugin {
             $this->redirect_with_notice('Please paste a conversation before generating.', 'error');
         }
 
+        $api_type = get_option(self::OPTION_API_TYPE, 'openai');
         $api_key  = get_option(self::OPTION_API_KEY);
         $api_base = rtrim((string) get_option(self::OPTION_API_BASE, 'https://api.openai.com/'), '/') . '/';
         $model    = (string) get_option(self::OPTION_MODEL, 'gpt-3.5-turbo');
@@ -444,12 +502,27 @@ class AIDC_Plugin {
             ]
         ];
 
-        $endpoint = $api_base . 'v1/chat/completions';
-        $args = [
-            'headers' => [
+        // Build endpoint and headers based on API type
+        if ($api_type === 'azure') {
+            // Azure OpenAI format: https://your-resource.openai.azure.com/openai/deployments/your-deployment/chat/completions?api-version=2024-02-01
+            $endpoint = $api_base . 'openai/deployments/' . $model . '/chat/completions?api-version=2024-02-01';
+            $headers = [
+                'api-key' => $api_key,
+                'Content-Type' => 'application/json'
+            ];
+            // Remove model from body for Azure
+            unset($body['model']);
+        } else {
+            // OpenAI format: https://api.openai.com/v1/chat/completions
+            $endpoint = $api_base . 'v1/chat/completions';
+            $headers = [
                 'Authorization' => 'Bearer ' . $api_key,
-                'Content-Type'  => 'application/json'
-            ],
+                'Content-Type' => 'application/json'
+            ];
+        }
+
+        $args = [
+            'headers' => $headers,
             'timeout' => 30,
             'body' => wp_json_encode($body)
         ];
