@@ -79,6 +79,7 @@ class AIDC_Plugin {
 		add_action( 'init', array( $this, 'register_cpt' ) );
 		add_action( 'admin_menu', array( $this, 'register_admin_pages' ) );
 		add_action( 'admin_post_aidc_generate', array( $this, 'handle_generate' ) );
+		add_action( 'wp_ajax_aidc_test_api', array( $this, 'handle_api_test' ) );
 		register_activation_hook( AIDC_PLUGIN_FILE, array( $this, 'on_activate' ) );
 		register_deactivation_hook( AIDC_PLUGIN_FILE, array( $this, 'on_deactivate' ) );
 	}
@@ -357,8 +358,14 @@ class AIDC_Plugin {
 						</td>
 					</tr>
 				</table>
-				<?php submit_button( __( 'Save Settings', 'ai-decision-cards' ) ); ?>
+				<p class="submit">
+					<?php submit_button( __( 'Save Settings', 'ai-decision-cards' ), 'primary', 'submit', false ); ?>
+					<button type="button" id="aidc_test_api" class="button button-secondary" style="margin-left: 10px;">
+						<?php esc_html_e( 'Test API Key', 'ai-decision-cards' ); ?>
+					</button>
+				</p>
 			</form>
+			<div id="aidc_test_result" style="margin-top: 15px;"></div>
 		</div>
 		<script type="text/javascript">
 		function toggleApiFields() {
@@ -390,6 +397,59 @@ class AIDC_Plugin {
 		// Initialize on page load
 		document.addEventListener('DOMContentLoaded', function() {
 			toggleApiFields();
+		});
+		
+		// Handle API test button click
+		document.getElementById('aidc_test_api').addEventListener('click', function() {
+			const button = this;
+			const resultDiv = document.getElementById('aidc_test_result');
+			
+			// Get current form values
+			const apiType = document.getElementById('aidc_api_type').value;
+			const apiKey = document.getElementById('aidc_api_key').value;
+			const apiBase = document.getElementById('aidc_api_base').value;
+			const model = document.getElementById('aidc_model').value;
+			
+			// Basic validation
+			if (!apiKey.trim()) {
+				resultDiv.innerHTML = '<div class="notice notice-error"><p><?php esc_html_e( "Please enter an API key first.", "ai-decision-cards" ); ?></p></div>';
+				return;
+			}
+			
+			// Show loading state
+			button.disabled = true;
+			button.textContent = '<?php esc_attr_e( "Testing...", "ai-decision-cards" ); ?>';
+			resultDiv.innerHTML = '<div class="notice notice-info"><p><?php esc_html_e( "Testing API connection...", "ai-decision-cards" ); ?></p></div>';
+			
+			// Prepare AJAX request
+			const formData = new FormData();
+			formData.append('action', 'aidc_test_api');
+			formData.append('aidc_test_nonce', '<?php echo esc_js( wp_create_nonce( "aidc_test_api" ) ); ?>');
+			formData.append('api_type', apiType);
+			formData.append('api_key', apiKey);
+			formData.append('api_base', apiBase);
+			formData.append('model', model);
+			
+			// Send AJAX request
+			fetch('<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>', {
+				method: 'POST',
+				body: formData
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					resultDiv.innerHTML = '<div class="notice notice-success"><p>' + data.data + '</p></div>';
+				} else {
+					resultDiv.innerHTML = '<div class="notice notice-error"><p>' + data.data + '</p></div>';
+				}
+			})
+			.catch(error => {
+				resultDiv.innerHTML = '<div class="notice notice-error"><p><?php esc_html_e( "Network error occurred while testing API.", "ai-decision-cards" ); ?></p></div>';
+			})
+			.finally(() => {
+				button.disabled = false;
+				button.textContent = '<?php esc_attr_e( "Test API Key", "ai-decision-cards" ); ?>';
+			});
 		});
 		</script>
 		<?php
@@ -513,8 +573,14 @@ class AIDC_Plugin {
             // Remove model from body for Azure
             unset($body['model']);
         } else {
-            // OpenAI format: https://api.openai.com/v1/chat/completions
-            $endpoint = $api_base . 'v1/chat/completions';
+            // OpenAI Compatible format - check if API base already contains v1
+            if (strpos($api_base, '/v1/') !== false) {
+                // API base already contains v1 (e.g., OpenRouter)
+                $endpoint = $api_base . 'chat/completions';
+            } else {
+                // Standard OpenAI format
+                $endpoint = $api_base . 'v1/chat/completions';
+            }
             $headers = [
                 'Authorization' => 'Bearer ' . $api_key,
                 'Content-Type' => 'application/json'
@@ -581,6 +647,162 @@ class AIDC_Plugin {
         }
         $this->redirect_with_notice('Draft created (ID ' . intval($post_id) . ').', 'success');
     }
+
+	/**
+	 * Handle API test AJAX request.
+	 *
+	 * @since 1.0.0
+	 */
+	public function handle_api_test() {
+		// Check permissions and nonce
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( __( 'Insufficient permissions.', 'ai-decision-cards' ) );
+		}
+		
+		if ( ! isset( $_POST['aidc_test_nonce'] ) || ! wp_verify_nonce( $_POST['aidc_test_nonce'], 'aidc_test_api' ) ) {
+			wp_send_json_error( __( 'Security check failed.', 'ai-decision-cards' ) );
+		}
+		
+		// Get form data
+		$api_type = isset( $_POST['api_type'] ) ? sanitize_text_field( $_POST['api_type'] ) : 'openai';
+		$api_key = isset( $_POST['api_key'] ) ? sanitize_text_field( $_POST['api_key'] ) : '';
+		$api_base = isset( $_POST['api_base'] ) ? sanitize_text_field( $_POST['api_base'] ) : '';
+		$model = isset( $_POST['model'] ) ? sanitize_text_field( $_POST['model'] ) : '';
+		
+		// Validate inputs
+		if ( empty( $api_key ) ) {
+			wp_send_json_error( __( 'API key is required.', 'ai-decision-cards' ) );
+		}
+		
+		if ( empty( $api_base ) ) {
+			wp_send_json_error( __( 'API base URL is required.', 'ai-decision-cards' ) );
+		}
+		
+		if ( empty( $model ) ) {
+			wp_send_json_error( __( 'Model is required.', 'ai-decision-cards' ) );
+		}
+		
+		// Ensure API base ends with slash
+		$api_base = rtrim( $api_base, '/' ) . '/';
+		
+		// Prepare test request body
+		$body = array(
+			'model' => $model,
+			'temperature' => 0,
+			'max_tokens' => 10,
+			'messages' => array(
+				array(
+					'role' => 'user',
+					'content' => 'Hello'
+				)
+			)
+		);
+		
+		// Build endpoint and headers based on API type
+		if ( $api_type === 'azure' ) {
+			// Azure OpenAI format
+			$endpoint = $api_base . 'openai/deployments/' . $model . '/chat/completions?api-version=2024-02-01';
+			$headers = array(
+				'api-key' => $api_key,
+				'Content-Type' => 'application/json'
+			);
+			// Remove model from body for Azure
+			unset( $body['model'] );
+		} else {
+			// OpenAI Compatible format - check if API base already contains v1
+			if ( strpos( $api_base, '/v1/' ) !== false ) {
+				// API base already contains v1 (e.g., OpenRouter)
+				$endpoint = $api_base . 'chat/completions';
+			} else {
+				// Standard OpenAI format
+				$endpoint = $api_base . 'v1/chat/completions';
+			}
+			$headers = array(
+				'Authorization' => 'Bearer ' . $api_key,
+				'Content-Type' => 'application/json'
+			);
+		}
+		
+		// Make the API request
+		$args = array(
+			'headers' => $headers,
+			'timeout' => 15,
+			'body' => wp_json_encode( $body )
+		);
+		
+		$response = wp_remote_post( $endpoint, $args );
+		
+		// Check for WordPress HTTP errors
+		if ( is_wp_error( $response ) ) {
+			wp_send_json_error(
+				sprintf(
+					/* translators: %s: Error message */
+					__( 'Connection failed: %s', 'ai-decision-cards' ),
+					$response->get_error_message()
+				)
+			);
+		}
+		
+		// Check HTTP response code
+		$response_code = wp_remote_retrieve_response_code( $response );
+		$response_body = wp_remote_retrieve_body( $response );
+		
+		if ( $response_code < 200 || $response_code >= 300 ) {
+			// Try to extract error message from response
+			$error_data = json_decode( $response_body, true );
+			$error_message = '';
+			
+			if ( $error_data && isset( $error_data['error']['message'] ) ) {
+				$error_message = $error_data['error']['message'];
+			} else {
+				$error_message = sprintf(
+					/* translators: %1$d: HTTP status code, %2$s: Response body */
+					__( 'HTTP %1$d: %2$s', 'ai-decision-cards' ),
+					$response_code,
+					$response_body
+				);
+			}
+			
+			// Add debug info for 405 errors
+			if ( $response_code === 405 ) {
+				$debug_info = sprintf(
+					/* translators: %s: API endpoint URL */
+					__( ' (Endpoint: %s)', 'ai-decision-cards' ),
+					$endpoint
+				);
+				$error_message .= $debug_info;
+			}
+			
+			wp_send_json_error(
+				sprintf(
+					/* translators: %s: Error message */
+					__( 'API Error: %s', 'ai-decision-cards' ),
+					$error_message
+				)
+			);
+		}
+		
+		// Try to parse the JSON response
+		$data = json_decode( $response_body, true );
+		if ( ! $data ) {
+			wp_send_json_error( __( 'Invalid JSON response from API.', 'ai-decision-cards' ) );
+		}
+		
+		// Check if response has expected structure
+		if ( ! isset( $data['choices'] ) || ! isset( $data['choices'][0] ) ) {
+			wp_send_json_error( __( 'Unexpected API response format.', 'ai-decision-cards' ) );
+		}
+		
+		// Success!
+		$provider_name = ( $api_type === 'azure' ) ? 'Azure OpenAI' : 'OpenAI Compatible API';
+		wp_send_json_success(
+			sprintf(
+				/* translators: %s: API provider name */
+				__( '✓ API connection successful! Connected to %s.', 'ai-decision-cards' ),
+				$provider_name
+			)
+		);
+	}
 
 	/**
 	 * Redirect with notice message.
