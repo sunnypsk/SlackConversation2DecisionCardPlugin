@@ -42,3 +42,21 @@ This project follows standard WordPress plugin development practices:
 - WordPress coding standards compliance
 - Proper plugin file structure in `ai-decision-cards/` directory
 - Version control tracks actual plugin source files
+- Security-first development with proper sanitization and nonce verification
+- Internationalization support using `ai-decision-cards` text domain
+
+## Architecture Notes
+
+- **Main Plugin File**: `ai-decision-cards/ai-decision-cards.php` contains the core plugin logic
+- **Custom Post Type**: `decision_card` for storing generated decision records
+- **Admin Pages**: Settings page for API configuration and generation interface
+- **API Integration**: Supports OpenAI and OpenAI-compatible services (OpenRouter, Azure OpenAI)
+- **Metadata Fields**: Status (Proposed/Approved/Rejected), Owner, Due Date
+
+## Security Considerations
+
+- All user inputs are properly sanitized using WordPress functions
+- Nonce verification for all form submissions
+- Capability checks (`edit_posts` for generation, `manage_options` for settings)
+- API keys stored securely in WordPress options
+- No direct database queries (uses WordPress APIs)

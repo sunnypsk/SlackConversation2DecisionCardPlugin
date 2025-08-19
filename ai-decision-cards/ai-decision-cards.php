@@ -514,9 +514,47 @@ class AIDC_Plugin {
                         <td><input type="date" id="aidc_due" name="aidc_due" class="regular-text" /></td>
                     </tr>
                 </table>
-                <?php submit_button('Generate Summary & Create Draft', 'primary', 'submit', true, ['onclick' => 'this.disabled=true; this.form.submit();']); ?>
+                <?php submit_button('Generate Summary & Create Draft', 'primary', 'submit', true, ['id' => 'aidc_generate_btn']); ?>
+                <div id="aidc_generate_status" style="margin-top: 15px; display: none;"></div>
             </form>
         </div>
+        <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[action*="admin-post.php"]');
+            const button = document.getElementById('aidc_generate_btn');
+            const statusDiv = document.getElementById('aidc_generate_status');
+            
+            if (form && button && statusDiv) {
+                form.addEventListener('submit', function(e) {
+                    // Basic validation
+                    const conversation = document.getElementById('aidc_conversation').value.trim();
+                    if (!conversation) {
+                        statusDiv.style.display = 'block';
+                        statusDiv.innerHTML = '<div class="notice notice-error"><p><?php esc_html_e( "Please enter a conversation before generating.", "ai-decision-cards" ); ?></p></div>';
+                        e.preventDefault();
+                        return false;
+                    }
+                    
+                    // Show loading state
+                    button.disabled = true;
+                    button.value = '<?php esc_attr_e( "Generating... Please wait", "ai-decision-cards" ); ?>';
+                    statusDiv.style.display = 'block';
+                    statusDiv.innerHTML = '<div class="notice notice-info"><p><?php esc_html_e( "🤖 AI is analyzing your conversation and creating a decision card... This may take 10-30 seconds.", "ai-decision-cards" ); ?></p></div>';
+                    
+                    // Set a timeout to re-enable the button in case something goes wrong
+                    setTimeout(function() {
+                        if (button.disabled) {
+                            button.disabled = false;
+                            button.value = '<?php esc_attr_e( "Generate Summary & Create Draft", "ai-decision-cards" ); ?>';
+                            statusDiv.innerHTML = '<div class="notice notice-warning"><p><?php esc_html_e( "Taking longer than expected. Please check your API settings or try again.", "ai-decision-cards" ); ?></p></div>';
+                        }
+                    }, 45000); // 45 seconds timeout
+                    
+                    return true;
+                });
+            }
+        });
+        </script>
         <?php
     }
 
