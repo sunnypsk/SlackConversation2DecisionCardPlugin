@@ -1,0 +1,98 @@
+# Slack Conversation to Decision Card Plugin
+
+A WordPress plugin that converts Slack-style conversations into AI-generated Decision Cards using OpenAI-compatible APIs.
+
+## 🎯 Project Overview
+
+This project implements a WordPress plugin that helps teams document important decisions by converting Slack conversation transcripts into structured Decision Cards with AI-powered summaries and action items.
+
+## 📁 Project Structure
+
+```
+SlackConversaton2DecisionCardPlugin/
+├── ai-decision-cards/          # Main WordPress plugin directory
+│   ├── ai-decision-cards.php   # Primary plugin file
+│   └── readme.md              # Plugin-specific documentation
+├── docs/                      # Project documentation
+│   └── prd.md                # Product Requirements Document
+├── CLAUDE.md                 # Development guidelines and instructions
+├── CLAUDE.local.md           # Local development preferences
+└── docker-compose.yml        # Docker development environment
+```
+
+## 🚀 Quick Start
+
+### For Users
+1. Navigate to the `ai-decision-cards/` directory for the complete WordPress plugin
+2. See `ai-decision-cards/readme.md` for installation and usage instructions
+
+### For Developers
+1. Review the complete PRD at `docs/prd.md`
+2. Check development guidelines in `CLAUDE.md`
+3. Follow WordPress plugin development best practices
+
+## 🎯 Key Features
+
+- **🤖 AI-Powered Structured Output**: Converts conversations into fixed 5-section Decision Cards
+  - **Decision**: One-sentence summary of what was decided
+  - **Summary**: Exactly 3 key bullet points with rationale
+  - **Action Items**: Task assignments with intelligent date handling
+  - **Sources**: Direct quotes from conversation with timestamps
+  - **Risks/Assumptions**: Identified concerns or assumptions
+- **📊 Meta Banner**: Visual status display (Status | Owner | Target) at top of each card
+- **📅 Smart Date Handling**: Automatically processes relative dates ("next week") with follow-up tasks
+- **👀 Preview Functionality**: Full preview capability for generated Decision Cards
+- **🎛️ Admin Interface**: Simple form-based conversation input with metadata fields
+- **🔌 Multiple AI Providers**: Supports OpenAI and OpenAI-compatible APIs (OpenRouter, Azure)
+- **📝 Draft Workflow**: Generated cards saved as drafts for review and editing
+
+## 🎉 Latest Updates (v1.1)
+
+### ✨ Major Feature Upgrades
+- **Fixed 5-Section Structure**: All Decision Cards now follow consistent format
+- **Visual Meta Banner**: Status/Owner/Target display at top of each card
+- **Intelligent Date Processing**: Handles "next week", "week after" with automatic follow-ups
+- **Preview Capability**: Full preview functionality for generated cards
+- **Enhanced AI Prompts**: Improved quality with 600 token limit
+
+### 🔧 Technical Improvements
+- Simplified content processing trusting AI Markdown output
+- Enhanced HTML tag support for better formatting
+- Public post type visibility for preview functionality
+- Improved accessibility with proper contrast ratios
+
+## 📖 Documentation
+
+- **Plugin Documentation**: See `ai-decision-cards/readme.md` for detailed plugin information
+- **Product Requirements**: Complete specifications in `docs/prd.md`
+- **Development Guidelines**: Project standards and practices in `CLAUDE.md`
+
+## 🛠️ Development
+
+This is a 1-week MVP build following WordPress plugin development standards:
+
+- Direct PHP development (no code generators)
+- WordPress coding standards compliance
+- Proper error handling and security measures
+- Internationalization support
+
+## 📋 Development Commands
+
+- **Linting**: Use WordPress coding standards with PHPCS
+- **Testing**: WordPress-specific testing approach (PHPUnit for WordPress)
+- **Development**: Edit PHP files directly in the `ai-decision-cards/` directory
+
+## 🔧 Requirements
+
+- WordPress 6.0+
+- PHP 7.4+
+- Valid OpenAI API key or compatible service
+- Internet connection for AI API calls
+
+## 📄 License
+
+GPL v2 or later
+
+---
+
+**Note**: The main plugin files are located in the `ai-decision-cards/` directory. This README provides project-level overview, while plugin-specific documentation is available in `ai-decision-cards/readme.md`.
