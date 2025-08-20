@@ -58,7 +58,7 @@ This project follows standard WordPress plugin development practices:
 - **Admin Pages**: Settings page for API configuration and generation interface
 - **API Integration**: Supports OpenAI and OpenAI-compatible services (OpenRouter, Azure OpenAI)
 - **Metadata Fields**: Status (Proposed/Approved/Rejected), Owner, Due Date
-- **Content Structure**: Fixed 5-section Markdown format enforced by AI prompt
+- **Content Structure**: Fixed 5-section HTML format enforced by AI prompt
 - **Meta Banner**: Displays at top of Decision Cards via `the_content` filter
 - **Relative Date Processing**: AI automatically detects and handles relative time phrases
 
@@ -78,8 +78,9 @@ This project follows standard WordPress plugin development practices:
 - Visible in preview mode and front-end display
 
 ### Technical Improvements
+- **Direct HTML Generation**: AI prompt modified to output HTML directly instead of Markdown for perfect rendering
 - Increased max_tokens to 600 for better AI responses
-- Simplified content processing to trust AI Markdown output
+- Simplified content processing to trust AI HTML output
 - Enhanced wp_kses whitelist for proper HTML tag support
 - Public post type visibility for preview functionality
 

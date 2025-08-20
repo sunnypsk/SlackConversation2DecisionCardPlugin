@@ -585,29 +585,38 @@ class AIDC_Plugin {
             $this->redirect_with_notice('Missing API key. Set it in Settings.', 'error');
         }
 
-        $prompt_system = "You convert Slack-like conversations into a Decision Card in strict Markdown with these sections, in this exact order:
+        $prompt_system = "You convert Slack-like conversations into a Decision Card in strict HTML with these sections, in this exact order:
 
-## Decision
-(One sentence. What was decided.)
+<h2>Decision</h2>
+<p>(One sentence. What was decided.)</p>
 
-## Summary
-(Exactly 3 concise bullets. Why/what changed, key rationale. Use only facts from the conversation.)
+<h2>Summary</h2>
+<ul>
+<li>(Exactly 3 concise bullets. Why/what changed, key rationale. Use only facts from the conversation.)</li>
+</ul>
 
-## Action Items
-(Bulleted list. Each item: **Owner** — task. Include \"Due: <YYYY-MM-DD>\" if an exact date is present in the conversation; otherwise \"Due: TBD\".
+<h2>Action Items</h2>
+<ul>
+<li><strong>Owner</strong> — task. Include \"Due: <YYYY-MM-DD>\" if an exact date is present in the conversation; otherwise \"Due: TBD\".
 If the conversation uses relative time (e.g., \"next week\", \"the week after\"), KEEP the phrase and ADD a follow-up item like:
-\"**Alice** — set exact date for '<relative phrase>' (Due: TBD)\".)
+\"<strong>Alice</strong> — set exact date for '<relative phrase>' (Due: TBD)\".</li>
+</ul>
 
-## Sources
-(Quote 2–3 short lines from the conversation that directly support the decision, with the original timestamps/names.)
+<h2>Sources</h2>
+<blockquote>
+<p>(Quote 2–3 short lines from the conversation that directly support the decision, with the original timestamps/names.)</p>
+</blockquote>
 
-## Risks / Assumptions
-(1–2 bullets on risks, unknowns, or assumptions mentioned or clearly implied in the conversation. If none, output \"None\".)
+<h2>Risks / Assumptions</h2>
+<ul>
+<li>(1–2 bullets on risks, unknowns, or assumptions mentioned or clearly implied in the conversation. If none, output \"None\".)</li>
+</ul>
 
 Rules:
 - Use only facts from the conversation. If uncertain, say \"TBD\" rather than inventing details.
 - Keep neutral, professional tone.
-- Output Markdown only. No extra preface or epilogue.";
+- Output HTML only. No extra preface or epilogue.
+- Use proper HTML tags: h2 for sections, ul/li for lists, p for paragraphs, strong for emphasis, blockquote for quotes.";
 
         $body = [
             'model' => $model,

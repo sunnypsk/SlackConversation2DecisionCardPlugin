@@ -56,7 +56,8 @@ SlackConversaton2DecisionCardPlugin/
 - **Enhanced AI Prompts**: Improved quality with 600 token limit
 
 ### 🔧 Technical Improvements
-- Simplified content processing trusting AI Markdown output
+- **Direct HTML Output**: AI now generates HTML directly instead of Markdown for perfect rendering
+- Simplified content processing trusting AI HTML output
 - Enhanced HTML tag support for better formatting
 - Public post type visibility for preview functionality
 - Improved accessibility with proper contrast ratios
