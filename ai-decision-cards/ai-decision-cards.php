@@ -80,6 +80,7 @@ class AIDC_Plugin {
 		add_action( 'admin_menu', array( $this, 'register_admin_pages' ) );
 		add_action( 'admin_post_aidc_generate', array( $this, 'handle_generate' ) );
 		add_action( 'wp_ajax_aidc_test_api', array( $this, 'handle_api_test' ) );
+		add_filter( 'the_content', array( $this, 'prepend_meta_banner' ), 5 );
 		register_activation_hook( AIDC_PLUGIN_FILE, array( $this, 'on_activate' ) );
 		register_deactivation_hook( AIDC_PLUGIN_FILE, array( $this, 'on_deactivate' ) );
 	}
@@ -158,7 +159,7 @@ class AIDC_Plugin {
 			'labels'                => $labels,
 			'supports'              => array( 'title', 'editor', 'custom-fields' ),
 			'hierarchical'          => false,
-			'public'                => false,
+			'public'                => true,
 			'show_ui'               => true,
 			'show_in_menu'          => true,
 			'menu_position'         => 25,
@@ -168,7 +169,7 @@ class AIDC_Plugin {
 			'can_export'            => true,
 			'has_archive'           => false,
 			'exclude_from_search'   => true,
-			'publicly_queryable'    => false,
+			'publicly_queryable'    => true,
 			'capability_type'       => 'post',
 			'map_meta_cap'          => true,
 			'show_in_rest'          => false,
@@ -584,19 +585,37 @@ class AIDC_Plugin {
             $this->redirect_with_notice('Missing API key. Set it in Settings.', 'error');
         }
 
-        $prompt_system = "You are an assistant that converts Slack-like conversations into a concise Decision Card. 
-- First, write a short **Summary** (3–6 sentences) focusing on the decision, key arguments, and rationale.
-- Then write **Action Items** as a bullet list with who/what/when if present.
-- Keep a neutral, professional tone.
-- Only use facts found in the conversation. If uncertain, say so.";
+        $prompt_system = "You convert Slack-like conversations into a Decision Card in strict Markdown with these sections, in this exact order:
+
+## Decision
+(One sentence. What was decided.)
+
+## Summary
+(Exactly 3 concise bullets. Why/what changed, key rationale. Use only facts from the conversation.)
+
+## Action Items
+(Bulleted list. Each item: **Owner** — task. Include \"Due: <YYYY-MM-DD>\" if an exact date is present in the conversation; otherwise \"Due: TBD\".
+If the conversation uses relative time (e.g., \"next week\", \"the week after\"), KEEP the phrase and ADD a follow-up item like:
+\"**Alice** — set exact date for '<relative phrase>' (Due: TBD)\".)
+
+## Sources
+(Quote 2–3 short lines from the conversation that directly support the decision, with the original timestamps/names.)
+
+## Risks / Assumptions
+(1–2 bullets on risks, unknowns, or assumptions mentioned or clearly implied in the conversation. If none, output \"None\".)
+
+Rules:
+- Use only facts from the conversation. If uncertain, say \"TBD\" rather than inventing details.
+- Keep neutral, professional tone.
+- Output Markdown only. No extra preface or epilogue.";
 
         $body = [
             'model' => $model,
             'temperature' => 0.2,
-            'max_tokens' => 500,
+            'max_tokens' => 600,
             'messages' => [
                 ['role' => 'system', 'content' => $prompt_system],
-                ['role' => 'user', 'content' => "Conversation:\n" . $conversation . "\n\nPlease output in the following structure:\nSummary:\n- ...\n- ...\n\nAction Items:\n- ...\n- ..."]
+                ['role' => 'user', 'content' => "Conversation:\n" . $conversation]
             ]
         ];
 
@@ -647,22 +666,9 @@ class AIDC_Plugin {
         $ai = $data['choices'][0]['message']['content'];
 
         $allowed = [
-            'p' => [], 'ul' => [], 'ol' => [], 'li' => [], 'strong' => [], 'em' => [], 'br' => [], 'b' => [], 'i' => [], 'h2' => [], 'h3' => [], 'code'=>[]
+            'h2' => [], 'h3' => [], 'p' => [], 'ul' => [], 'ol' => [], 'li' => [], 'strong' => [], 'em' => [], 'code' => [], 'blockquote' => [], 'br' => []
         ];
-        $safe_ai = wp_kses($ai, $allowed);
-
-        $content = "<h2>Summary</h2>\n";
-        if (stripos($safe_ai, 'Action Items') !== false) {
-            $parts = preg_split('/\\bAction Items\\b[:]?/i', $safe_ai, 2);
-            $summary_html = trim($parts[0]);
-            $actions_html = isset($parts[1]) ? trim($parts[1]) : '';
-            $content .= wpautop($summary_html);
-            if ($actions_html !== '') {
-                $content .= "\n<h2>Action Items</h2>\n" . wpautop($actions_html);
-            }
-        } else {
-            $content .= wpautop($safe_ai);
-        }
+        $content = wp_kses($ai, $allowed);
 
         $postarr = [
             'post_type'   => 'decision_card',
@@ -840,6 +846,49 @@ class AIDC_Plugin {
 				$provider_name
 			)
 		);
+	}
+
+	/**
+	 * Prepend meta banner to Decision Card content.
+	 *
+	 * @since 1.0.0
+	 * @param string $content The post content.
+	 * @return string Modified content with meta banner.
+	 */
+	public function prepend_meta_banner( $content ) {
+		// Only apply to decision_card post type
+		if ( get_post_type() !== 'decision_card' ) {
+			return $content;
+		}
+
+		// Skip if we're in the admin area (except for preview)
+		if ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+			return $content;
+		}
+
+		// Get meta values
+		$status = get_post_meta( get_the_ID(), '_aidc_status', true );
+		$owner = get_post_meta( get_the_ID(), '_aidc_owner', true );
+		$due = get_post_meta( get_the_ID(), '_aidc_due', true );
+
+		// Set defaults for empty values
+		$status = $status ? esc_html( $status ) : 'TBD';
+		$owner = $owner ? esc_html( $owner ) : 'TBD';
+		$due = $due ? esc_html( $due ) : 'TBD';
+
+		// Create banner HTML with inline styles for accessibility
+		$banner = sprintf(
+			'<div class="aidc-meta-banner" style="background-color: #f9f9f9; border: 1px solid #ddd; padding: 12px 16px; margin-bottom: 20px; font-size: 14px; line-height: 1.4; color: #333;">%s</div>',
+			sprintf(
+				/* translators: %1$s: status, %2$s: owner, %3$s: due date */
+				__( 'Status: %1$s | Owner: %2$s | Target: %3$s', 'ai-decision-cards' ),
+				'<strong>' . $status . '</strong>',
+				'<strong>' . $owner . '</strong>',
+				'<strong>' . $due . '</strong>'
+			)
+		);
+
+		return $banner . $content;
 	}
 
 	/**
