@@ -77,9 +77,11 @@ class AIDC_Plugin {
 	 */
 	private function init_hooks() {
 		add_action( 'init', array( $this, 'register_cpt' ) );
+		add_action( 'init', array( $this, 'register_shortcodes' ) );
 		add_action( 'admin_menu', array( $this, 'register_admin_pages' ) );
 		add_action( 'admin_post_aidc_generate', array( $this, 'handle_generate' ) );
 		add_action( 'wp_ajax_aidc_test_api', array( $this, 'handle_api_test' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_shortcode_meta_box' ) );
 		add_filter( 'the_content', array( $this, 'prepend_meta_banner' ), 5 );
 		register_activation_hook( AIDC_PLUGIN_FILE, array( $this, 'on_activate' ) );
 		register_deactivation_hook( AIDC_PLUGIN_FILE, array( $this, 'on_deactivate' ) );
@@ -182,6 +184,548 @@ class AIDC_Plugin {
 	}
 
 	/**
+	 * Register shortcodes.
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_shortcodes() {
+		add_shortcode( 'decision-cards-list', array( $this, 'shortcode_decision_cards_list' ) );
+		add_shortcode( 'decision-card', array( $this, 'shortcode_single_decision_card' ) );
+	}
+
+	/**
+	 * Handle [decision-cards-list] shortcode.
+	 *
+	 * @since 1.0.0
+	 * @param array $atts Shortcode attributes.
+	 * @return string HTML output.
+	 */
+	public function shortcode_decision_cards_list( $atts ) {
+		$atts = shortcode_atts(
+			array(
+				'limit'  => 10,
+				'status' => '',
+				'owner'  => '',
+				'search' => '',
+				'show_filters' => 'yes',
+			),
+			$atts,
+			'decision-cards-list'
+		);
+
+		// Sanitize attributes
+		$limit = max( 1, min( 50, intval( $atts['limit'] ) ) );
+		$status = sanitize_text_field( $atts['status'] );
+		$owner = sanitize_text_field( $atts['owner'] );
+		$search = sanitize_text_field( $atts['search'] );
+		$show_filters = ( 'yes' === $atts['show_filters'] || 'true' === $atts['show_filters'] );
+
+		// Build query
+		$query_args = array(
+			'post_type'      => 'decision_card',
+			'post_status'    => 'publish',
+			'posts_per_page' => $limit,
+		);
+
+		// Add search
+		if ( ! empty( $search ) ) {
+			$query_args['s'] = $search;
+		}
+
+		// Add meta query for filters
+		$meta_query = array();
+		if ( ! empty( $status ) ) {
+			$meta_query[] = array(
+				'key'     => '_aidc_status',
+				'value'   => $status,
+				'compare' => '=',
+			);
+		}
+		if ( ! empty( $owner ) ) {
+			$meta_query[] = array(
+				'key'     => '_aidc_owner',
+				'value'   => $owner,
+				'compare' => 'LIKE',
+			);
+		}
+		if ( ! empty( $meta_query ) ) {
+			$query_args['meta_query'] = $meta_query;
+		}
+
+		$query = new WP_Query( $query_args );
+
+		ob_start();
+		?>
+		<div class="aidc-shortcode-wrapper">
+			<?php if ( $show_filters ) : ?>
+				<div class="aidc-shortcode-filters">
+					<form method="get" class="aidc-shortcode-filter-form">
+						<input type="text" name="aidc_search" value="<?php echo esc_attr( $_GET['aidc_search'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Search decision cards...', 'ai-decision-cards' ); ?>">
+						<select name="aidc_status">
+							<option value=""><?php esc_html_e( 'All Statuses', 'ai-decision-cards' ); ?></option>
+							<option value="Proposed" <?php selected( $_GET['aidc_status'] ?? '', 'Proposed' ); ?>><?php esc_html_e( 'Proposed', 'ai-decision-cards' ); ?></option>
+							<option value="Approved" <?php selected( $_GET['aidc_status'] ?? '', 'Approved' ); ?>><?php esc_html_e( 'Approved', 'ai-decision-cards' ); ?></option>
+							<option value="Rejected" <?php selected( $_GET['aidc_status'] ?? '', 'Rejected' ); ?>><?php esc_html_e( 'Rejected', 'ai-decision-cards' ); ?></option>
+						</select>
+						<button type="submit"><?php esc_html_e( 'Filter', 'ai-decision-cards' ); ?></button>
+					</form>
+				</div>
+			<?php endif; ?>
+
+			<?php if ( $query->have_posts() ) : ?>
+				<div class="aidc-shortcode-grid">
+					<?php while ( $query->have_posts() ) : $query->the_post(); ?>
+						<div class="aidc-shortcode-card">
+							<h3><a href="<?php echo esc_url( get_permalink() ); ?>"><?php the_title(); ?></a></h3>
+							
+							<?php
+							$status = get_post_meta( get_the_ID(), '_aidc_status', true );
+							$owner = get_post_meta( get_the_ID(), '_aidc_owner', true );
+							$due = get_post_meta( get_the_ID(), '_aidc_due', true );
+							?>
+							
+							<div class="aidc-shortcode-meta">
+								<span class="aidc-shortcode-status aidc-status-<?php echo esc_attr( strtolower( $status ) ); ?>">
+									<?php echo $status ? esc_html( $status ) : 'TBD'; ?>
+								</span>
+								<?php if ( $owner ) : ?>
+									<span class="aidc-shortcode-owner"><?php esc_html_e( 'Owner:', 'ai-decision-cards' ); ?> <?php echo esc_html( $owner ); ?></span>
+								<?php endif; ?>
+								<?php if ( $due ) : ?>
+									<span class="aidc-shortcode-due"><?php esc_html_e( 'Due:', 'ai-decision-cards' ); ?> <?php echo esc_html( $due ); ?></span>
+								<?php endif; ?>
+							</div>
+							
+							<div class="aidc-shortcode-excerpt">
+								<?php
+								$content = get_the_content();
+								// Extract summary or first paragraph
+								if ( preg_match( '/<h2>Summary<\/h2>\s*<ul>(.*?)<\/ul>/s', $content, $matches ) ) {
+									echo wp_kses_post( $matches[1] );
+								} else {
+									echo wp_trim_words( wp_strip_all_tags( $content ), 15 );
+								}
+								?>
+							</div>
+							
+							<div class="aidc-shortcode-date">
+								<?php echo get_the_date(); ?>
+							</div>
+						</div>
+					<?php endwhile; ?>
+				</div>
+			<?php else : ?>
+				<p><?php esc_html_e( 'No Decision Cards found.', 'ai-decision-cards' ); ?></p>
+			<?php endif; ?>
+
+			<style>
+				.aidc-shortcode-wrapper {
+					margin: 20px 0;
+				}
+				.aidc-shortcode-filters {
+					background: #f9f9f9;
+					padding: 15px;
+					border-radius: 5px;
+					margin-bottom: 20px;
+				}
+				.aidc-shortcode-filter-form {
+					display: flex;
+					gap: 10px;
+					flex-wrap: wrap;
+					align-items: center;
+				}
+				.aidc-shortcode-filter-form input,
+				.aidc-shortcode-filter-form select,
+				.aidc-shortcode-filter-form button {
+					padding: 8px 12px;
+					border: 1px solid #ddd;
+					border-radius: 4px;
+				}
+				.aidc-shortcode-filter-form button {
+					background: #0073aa;
+					color: white;
+					cursor: pointer;
+				}
+				.aidc-shortcode-grid {
+					display: grid;
+					grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+					gap: 20px;
+				}
+				.aidc-shortcode-card {
+					background: white;
+					padding: 15px;
+					border: 1px solid #ddd;
+					border-radius: 5px;
+					box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+				}
+				.aidc-shortcode-card h3 {
+					margin: 0 0 10px 0;
+				}
+				.aidc-shortcode-card h3 a {
+					color: #333;
+					text-decoration: none;
+				}
+				.aidc-shortcode-card h3 a:hover {
+					color: #0073aa;
+				}
+				.aidc-shortcode-meta {
+					margin-bottom: 10px;
+					display: flex;
+					flex-wrap: wrap;
+					gap: 8px;
+					align-items: center;
+				}
+				.aidc-shortcode-status {
+					padding: 3px 6px;
+					border-radius: 3px;
+					font-size: 11px;
+					font-weight: bold;
+					text-transform: uppercase;
+				}
+				.aidc-status-proposed {
+					background: #fff3cd;
+					color: #856404;
+				}
+				.aidc-status-approved {
+					background: #d4edda;
+					color: #155724;
+				}
+				.aidc-status-rejected {
+					background: #f8d7da;
+					color: #721c24;
+				}
+				.aidc-shortcode-owner,
+				.aidc-shortcode-due {
+					font-size: 11px;
+					color: #666;
+				}
+				.aidc-shortcode-excerpt {
+					color: #555;
+					margin-bottom: 10px;
+				}
+				.aidc-shortcode-date {
+					font-size: 11px;
+					color: #999;
+					text-align: right;
+				}
+				@media (max-width: 600px) {
+					.aidc-shortcode-grid {
+						grid-template-columns: 1fr;
+					}
+					.aidc-shortcode-filter-form {
+						flex-direction: column;
+						align-items: stretch;
+					}
+				}
+			</style>
+		</div>
+		<?php
+		wp_reset_postdata();
+		return ob_get_clean();
+	}
+
+	/**
+	 * Handle [decision-card] shortcode for single decision card.
+	 *
+	 * @since 1.0.0
+	 * @param array $atts Shortcode attributes.
+	 * @return string HTML output.
+	 */
+	public function shortcode_single_decision_card( $atts ) {
+		$atts = shortcode_atts(
+			array(
+				'id'          => '',
+				'show_meta'   => 'yes',
+				'excerpt_only' => 'no',
+			),
+			$atts,
+			'decision-card'
+		);
+
+		// Validate ID
+		$post_id = intval( $atts['id'] );
+		if ( ! $post_id ) {
+			return '<p>' . esc_html__( 'Error: Decision Card ID is required.', 'ai-decision-cards' ) . '</p>';
+		}
+
+		// Get the post
+		$post = get_post( $post_id );
+		if ( ! $post || 'decision_card' !== $post->post_type || 'publish' !== $post->post_status ) {
+			return '<p>' . esc_html__( 'Error: Decision Card not found or not published.', 'ai-decision-cards' ) . '</p>';
+		}
+
+		// Sanitize attributes
+		$show_meta = ( 'yes' === $atts['show_meta'] || 'true' === $atts['show_meta'] );
+		$excerpt_only = ( 'yes' === $atts['excerpt_only'] || 'true' === $atts['excerpt_only'] );
+
+		// Get meta data
+		$status = get_post_meta( $post_id, '_aidc_status', true );
+		$owner = get_post_meta( $post_id, '_aidc_owner', true );
+		$due = get_post_meta( $post_id, '_aidc_due', true );
+
+		ob_start();
+		?>
+		<div class="aidc-single-card-wrapper">
+			<?php if ( $show_meta ) : ?>
+				<div class="aidc-single-meta-banner">
+					<?php
+					printf(
+						/* translators: %1$s: status, %2$s: owner, %3$s: due date */
+						__( 'Status: %1$s | Owner: %2$s | Target: %3$s', 'ai-decision-cards' ),
+						'<strong>' . ( $status ? esc_html( $status ) : 'TBD' ) . '</strong>',
+						'<strong>' . ( $owner ? esc_html( $owner ) : 'TBD' ) . '</strong>',
+						'<strong>' . ( $due ? esc_html( $due ) : 'TBD' ) . '</strong>'
+					);
+					?>
+				</div>
+			<?php endif; ?>
+
+			<div class="aidc-single-card-content">
+				<h3 class="aidc-single-card-title">
+					<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" target="_blank">
+						<?php echo esc_html( $post->post_title ); ?>
+					</a>
+				</h3>
+
+				<?php if ( $excerpt_only ) : ?>
+					<div class="aidc-single-card-excerpt">
+						<?php
+						$content = $post->post_content;
+						// Extract summary or first paragraph
+						if ( preg_match( '/<h2>Summary<\/h2>\s*<ul>(.*?)<\/ul>/s', $content, $matches ) ) {
+							echo wp_kses_post( $matches[1] );
+						} else {
+							echo wp_trim_words( wp_strip_all_tags( $content ), 30 );
+						}
+						?>
+					</div>
+				<?php else : ?>
+					<div class="aidc-single-card-full">
+						<?php echo wp_kses_post( $post->post_content ); ?>
+					</div>
+				<?php endif; ?>
+
+				<div class="aidc-single-card-footer">
+					<span class="aidc-single-card-date"><?php echo get_the_date( '', $post_id ); ?></span>
+					<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" target="_blank" class="aidc-single-card-link">
+						<?php esc_html_e( 'View Full Decision Card', 'ai-decision-cards' ); ?>
+					</a>
+				</div>
+			</div>
+
+			<style>
+				.aidc-single-card-wrapper {
+					border: 1px solid #ddd;
+					border-radius: 8px;
+					padding: 20px;
+					margin: 20px 0;
+					background: white;
+					box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+				}
+				
+				.aidc-single-meta-banner {
+					background-color: #f9f9f9;
+					border: 1px solid #ddd;
+					padding: 12px 16px;
+					margin-bottom: 20px;
+					font-size: 14px;
+					line-height: 1.4;
+					color: #333;
+					border-radius: 4px;
+				}
+				
+				.aidc-single-card-title {
+					margin: 0 0 15px 0;
+					font-size: 1.3em;
+					line-height: 1.3;
+				}
+				
+				.aidc-single-card-title a {
+					color: #2c3e50;
+					text-decoration: none;
+				}
+				
+				.aidc-single-card-title a:hover {
+					color: #0073aa;
+				}
+				
+				.aidc-single-card-content {
+					line-height: 1.6;
+				}
+				
+				.aidc-single-card-excerpt {
+					color: #555;
+					margin-bottom: 15px;
+				}
+				
+				.aidc-single-card-excerpt ul {
+					margin: 0;
+					padding-left: 20px;
+				}
+				
+				.aidc-single-card-full h2 {
+					color: #2c3e50;
+					border-bottom: 2px solid #f0f0f0;
+					padding-bottom: 5px;
+					margin-top: 25px;
+					margin-bottom: 15px;
+				}
+				
+				.aidc-single-card-full h2:first-child {
+					margin-top: 0;
+				}
+				
+				.aidc-single-card-full ul {
+					margin: 10px 0;
+					padding-left: 25px;
+				}
+				
+				.aidc-single-card-full blockquote {
+					background: #f9f9f9;
+					border-left: 4px solid #0073aa;
+					margin: 15px 0;
+					padding: 10px 15px;
+					font-style: italic;
+					color: #666;
+				}
+				
+				.aidc-single-card-footer {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					margin-top: 20px;
+					padding-top: 15px;
+					border-top: 1px solid #f0f0f0;
+					font-size: 14px;
+				}
+				
+				.aidc-single-card-date {
+					color: #999;
+				}
+				
+				.aidc-single-card-link {
+					color: #0073aa;
+					text-decoration: none;
+					font-weight: 500;
+				}
+				
+				.aidc-single-card-link:hover {
+					text-decoration: underline;
+				}
+				
+				@media (max-width: 600px) {
+					.aidc-single-card-wrapper {
+						padding: 15px;
+					}
+					
+					.aidc-single-card-footer {
+						flex-direction: column;
+						align-items: flex-start;
+						gap: 10px;
+					}
+				}
+			</style>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Add shortcode meta box to decision card edit screen.
+	 *
+	 * @since 1.0.0
+	 */
+	public function add_shortcode_meta_box() {
+		add_meta_box(
+			'aidc_shortcode_info',
+			__( 'Embed This Decision Card', 'ai-decision-cards' ),
+			array( $this, 'render_shortcode_meta_box' ),
+			'decision_card',
+			'side',
+			'high'
+		);
+	}
+
+	/**
+	 * Render shortcode meta box content.
+	 *
+	 * @since 1.0.0
+	 * @param WP_Post $post The current post object.
+	 */
+	public function render_shortcode_meta_box( $post ) {
+		?>
+		<div class="aidc-shortcode-meta-box">
+			<p><?php esc_html_e( 'Use these shortcodes to embed this Decision Card in pages or posts:', 'ai-decision-cards' ); ?></p>
+			
+			<div style="margin-bottom: 15px;">
+				<label style="font-weight: bold; display: block; margin-bottom: 5px;">
+					<?php esc_html_e( 'Full Decision Card:', 'ai-decision-cards' ); ?>
+				</label>
+				<input type="text" 
+					   value="[decision-card id=&quot;<?php echo esc_attr( $post->ID ); ?>&quot;]" 
+					   readonly 
+					   onclick="this.select()" 
+					   style="width: 100%; font-family: monospace; background: #f9f9f9; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+				<p class="description" style="margin-top: 5px;">
+					<?php esc_html_e( 'Displays the complete Decision Card with status banner', 'ai-decision-cards' ); ?>
+				</p>
+			</div>
+			
+			<div style="margin-bottom: 15px;">
+				<label style="font-weight: bold; display: block; margin-bottom: 5px;">
+					<?php esc_html_e( 'Summary Only:', 'ai-decision-cards' ); ?>
+				</label>
+				<input type="text" 
+					   value="[decision-card id=&quot;<?php echo esc_attr( $post->ID ); ?>&quot; excerpt_only=&quot;yes&quot;]" 
+					   readonly 
+					   onclick="this.select()" 
+					   style="width: 100%; font-family: monospace; background: #f9f9f9; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+				<p class="description" style="margin-top: 5px;">
+					<?php esc_html_e( 'Shows only the summary section for quick reference', 'ai-decision-cards' ); ?>
+				</p>
+			</div>
+			
+			<div style="margin-bottom: 15px;">
+				<label style="font-weight: bold; display: block; margin-bottom: 5px;">
+					<?php esc_html_e( 'Without Status Banner:', 'ai-decision-cards' ); ?>
+				</label>
+				<input type="text" 
+					   value="[decision-card id=&quot;<?php echo esc_attr( $post->ID ); ?>&quot; show_meta=&quot;no&quot;]" 
+					   readonly 
+					   onclick="this.select()" 
+					   style="width: 100%; font-family: monospace; background: #f9f9f9; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+				<p class="description" style="margin-top: 5px;">
+					<?php esc_html_e( 'Hides the status banner for cleaner display', 'ai-decision-cards' ); ?>
+				</p>
+			</div>
+			
+			<div style="background: #e7f3ff; padding: 10px; border-radius: 4px; margin-top: 15px;">
+				<p style="margin: 0; font-size: 12px;">
+					<strong><?php esc_html_e( 'How to use:', 'ai-decision-cards' ); ?></strong><br>
+					<?php esc_html_e( 'Click any shortcode above to select it, then copy (Ctrl+C) and paste into your page editor.', 'ai-decision-cards' ); ?>
+				</p>
+			</div>
+			
+			<div style="margin-top: 15px;">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=aidc_settings#shortcode-guide' ) ); ?>" target="_blank" style="text-decoration: none;">
+					<?php esc_html_e( 'View Complete Shortcode Guide →', 'ai-decision-cards' ); ?>
+				</a>
+			</div>
+		</div>
+		
+		<style>
+			.aidc-shortcode-meta-box input[readonly] {
+				cursor: pointer;
+			}
+			.aidc-shortcode-meta-box input[readonly]:focus {
+				box-shadow: 0 0 5px rgba(0,123,255,0.3);
+				border-color: #007cba;
+			}
+		</style>
+		<?php
+	}
+
+	/**
 	 * Register meta fields for decision cards.
 	 *
 	 * @since 1.0.0
@@ -245,6 +789,27 @@ class AIDC_Plugin {
 			'manage_options',
 			'aidc_settings',
 			array( $this, 'render_settings_page' )
+		);
+
+		// Add public Decision Cards Display page (accessible to everyone)
+		add_submenu_page(
+			'edit.php?post_type=decision_card',
+			__( 'View Public Display', 'ai-decision-cards' ),
+			__( 'View Public Display', 'ai-decision-cards' ),
+			'read',
+			'aidc_display',
+			array( $this, 'render_display_page' )
+		);
+
+		// Add public accessible page that doesn't require admin access
+		add_menu_page(
+			__( 'Decision Cards Display', 'ai-decision-cards' ),
+			__( 'Decision Cards Display', 'ai-decision-cards' ),
+			'read',
+			'decision-cards-display',
+			array( $this, 'render_public_display_page' ),
+			'dashicons-yes-alt',
+			30
 		);
 	}
 
@@ -453,6 +1018,59 @@ class AIDC_Plugin {
 			});
 		});
 		</script>
+
+		<!-- Shortcode Usage Guide -->
+		<div style="margin-top: 40px;">
+			<h2><?php esc_html_e( 'Shortcode Usage Guide', 'ai-decision-cards' ); ?></h2>
+			<p><?php esc_html_e( 'Use these shortcodes to display Decision Cards on your website pages and posts.', 'ai-decision-cards' ); ?></p>
+			
+			<div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+				<h3><?php esc_html_e( 'Display Decision Cards List', 'ai-decision-cards' ); ?></h3>
+				<p><?php esc_html_e( 'Show a grid of Decision Cards with optional filtering:', 'ai-decision-cards' ); ?></p>
+				
+				<div style="background: white; padding: 15px; border-radius: 4px; font-family: monospace; margin: 10px 0;">
+					<div style="margin-bottom: 8px;"><code>[decision-cards-list]</code> <span style="color: #666;"><?php esc_html_e( '— Display all Decision Cards', 'ai-decision-cards' ); ?></span></div>
+					<div style="margin-bottom: 8px;"><code>[decision-cards-list limit="5"]</code> <span style="color: #666;"><?php esc_html_e( '— Show only 5 cards', 'ai-decision-cards' ); ?></span></div>
+					<div style="margin-bottom: 8px;"><code>[decision-cards-list status="Approved"]</code> <span style="color: #666;"><?php esc_html_e( '— Show only approved cards', 'ai-decision-cards' ); ?></span></div>
+					<div style="margin-bottom: 8px;"><code>[decision-cards-list owner="John"]</code> <span style="color: #666;"><?php esc_html_e( '— Filter by owner', 'ai-decision-cards' ); ?></span></div>
+					<div><code>[decision-cards-list show_filters="no"]</code> <span style="color: #666;"><?php esc_html_e( '— Hide search filters', 'ai-decision-cards' ); ?></span></div>
+				</div>
+				
+				<h4><?php esc_html_e( 'Available Parameters:', 'ai-decision-cards' ); ?></h4>
+				<ul>
+					<li><strong>limit</strong>: <?php esc_html_e( 'Number of cards to display (1-50, default: 10)', 'ai-decision-cards' ); ?></li>
+					<li><strong>status</strong>: <?php esc_html_e( 'Filter by status (Proposed, Approved, Rejected)', 'ai-decision-cards' ); ?></li>
+					<li><strong>owner</strong>: <?php esc_html_e( 'Filter by owner name', 'ai-decision-cards' ); ?></li>
+					<li><strong>search</strong>: <?php esc_html_e( 'Search in card titles and content', 'ai-decision-cards' ); ?></li>
+					<li><strong>show_filters</strong>: <?php esc_html_e( 'Show/hide filter form (yes/no, default: yes)', 'ai-decision-cards' ); ?></li>
+				</ul>
+			</div>
+			
+			<div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+				<h3><?php esc_html_e( 'Display Single Decision Card', 'ai-decision-cards' ); ?></h3>
+				<p><?php esc_html_e( 'Embed a specific Decision Card by its ID:', 'ai-decision-cards' ); ?></p>
+				
+				<div style="background: white; padding: 15px; border-radius: 4px; font-family: monospace; margin: 10px 0;">
+					<div style="margin-bottom: 8px;"><code>[decision-card id="123"]</code> <span style="color: #666;"><?php esc_html_e( '— Display full Decision Card', 'ai-decision-cards' ); ?></span></div>
+					<div style="margin-bottom: 8px;"><code>[decision-card id="123" excerpt_only="yes"]</code> <span style="color: #666;"><?php esc_html_e( '— Show only summary', 'ai-decision-cards' ); ?></span></div>
+					<div><code>[decision-card id="123" show_meta="no"]</code> <span style="color: #666;"><?php esc_html_e( '— Hide status banner', 'ai-decision-cards' ); ?></span></div>
+				</div>
+				
+				<h4><?php esc_html_e( 'Available Parameters:', 'ai-decision-cards' ); ?></h4>
+				<ul>
+					<li><strong>id</strong>: <?php esc_html_e( 'Decision Card ID (required - find this in the URL when editing)', 'ai-decision-cards' ); ?></li>
+					<li><strong>show_meta</strong>: <?php esc_html_e( 'Show status banner (yes/no, default: yes)', 'ai-decision-cards' ); ?></li>
+					<li><strong>excerpt_only</strong>: <?php esc_html_e( 'Show only summary instead of full content (yes/no, default: no)', 'ai-decision-cards' ); ?></li>
+				</ul>
+			</div>
+			
+			<div style="background: #fff2cc; padding: 15px; border-radius: 8px; border-left: 4px solid #ffcc00;">
+				<h4><?php esc_html_e( 'Quick Copy', 'ai-decision-cards' ); ?></h4>
+				<p><?php esc_html_e( 'You can copy these shortcodes and paste them directly into any page or post editor.', 'ai-decision-cards' ); ?></p>
+				<p><?php esc_html_e( 'To find a Decision Card ID, edit the card and look at the URL: ...&post=123 (where 123 is the ID)', 'ai-decision-cards' ); ?></p>
+			</div>
+		</div>
+		
 		<?php
 	}
 
@@ -898,6 +1516,628 @@ Rules:
 		);
 
 		return $banner . $content;
+	}
+
+	/**
+	 * Render display page (admin area).
+	 *
+	 * @since 1.0.0
+	 */
+	public function render_display_page() {
+		?>
+		<div class="wrap">
+			<h1><?php esc_html_e( 'Decision Cards Display', 'ai-decision-cards' ); ?></h1>
+			<p><?php esc_html_e( 'Preview how Decision Cards appear to website visitors.', 'ai-decision-cards' ); ?></p>
+			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=decision-cards-display' ) ); ?>" target="_blank" class="button button-secondary"><?php esc_html_e( 'View Public Display Page', 'ai-decision-cards' ); ?></a></p>
+			<?php $this->render_cards_list(); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render public display page.
+	 *
+	 * @since 1.0.0
+	 */
+	public function render_public_display_page() {
+		?>
+		<!DOCTYPE html>
+		<html <?php language_attributes(); ?>>
+		<head>
+			<meta charset="<?php bloginfo( 'charset' ); ?>">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<title><?php esc_html_e( 'Decision Cards Display', 'ai-decision-cards' ); ?> - <?php bloginfo( 'name' ); ?></title>
+			<?php $this->render_display_styles(); ?>
+		</head>
+		<body class="aidc-public-display">
+			<div class="aidc-container">
+				<header class="aidc-header">
+					<h1><?php esc_html_e( 'Decision Cards', 'ai-decision-cards' ); ?></h1>
+					<p><?php esc_html_e( 'AI-generated decision summaries from team conversations', 'ai-decision-cards' ); ?></p>
+				</header>
+				
+				<div class="aidc-embed-info">
+					<div class="aidc-embed-toggle">
+						<button type="button" onclick="toggleEmbedInfo()" class="aidc-embed-button">
+							<span class="dashicons dashicons-admin-page"></span>
+							<?php esc_html_e( 'How to Embed These Cards', 'ai-decision-cards' ); ?>
+						</button>
+					</div>
+					<div id="aidc-embed-content" class="aidc-embed-content" style="display: none;">
+						<h3><?php esc_html_e( 'Embed Decision Cards on Your Website', 'ai-decision-cards' ); ?></h3>
+						<p><?php esc_html_e( 'You can easily embed these Decision Cards in your pages and posts using shortcodes:', 'ai-decision-cards' ); ?></p>
+						
+						<div class="aidc-embed-examples">
+							<div class="aidc-embed-example">
+								<h4><?php esc_html_e( 'Display All Cards:', 'ai-decision-cards' ); ?></h4>
+								<code>[decision-cards-list]</code>
+								<p><?php esc_html_e( 'Shows a grid of all Decision Cards with filtering options', 'ai-decision-cards' ); ?></p>
+							</div>
+							
+							<div class="aidc-embed-example">
+								<h4><?php esc_html_e( 'Display Specific Card:', 'ai-decision-cards' ); ?></h4>
+								<code>[decision-card id="123"]</code>
+								<p><?php esc_html_e( 'Shows a single Decision Card (replace 123 with the actual card ID)', 'ai-decision-cards' ); ?></p>
+							</div>
+							
+							<div class="aidc-embed-example">
+								<h4><?php esc_html_e( 'Filter by Status:', 'ai-decision-cards' ); ?></h4>
+								<code>[decision-cards-list status="Approved"]</code>
+								<p><?php esc_html_e( 'Shows only approved Decision Cards', 'ai-decision-cards' ); ?></p>
+							</div>
+						</div>
+						
+						<p>
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=aidc_settings#shortcode-guide' ) ); ?>" target="_blank" class="aidc-guide-link">
+								<?php esc_html_e( 'View Complete Shortcode Guide →', 'ai-decision-cards' ); ?>
+							</a>
+						</p>
+					</div>
+				</div>
+				
+				<?php $this->render_search_filters(); ?>
+				<?php $this->render_cards_list(); ?>
+			</div>
+		</body>
+		</html>
+		<?php
+	}
+
+	/**
+	 * Render cards list with pagination.
+	 *
+	 * @since 1.0.0
+	 */
+	private function render_cards_list() {
+		// Get current page and search parameters
+		$paged = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'] ) ) : 1;
+		$search = isset( $_GET['search'] ) ? sanitize_text_field( $_GET['search'] ) : '';
+		$status_filter = isset( $_GET['status'] ) ? sanitize_text_field( $_GET['status'] ) : '';
+		$owner_filter = isset( $_GET['owner'] ) ? sanitize_text_field( $_GET['owner'] ) : '';
+
+		// Build query arguments
+		$args = array(
+			'post_type'      => 'decision_card',
+			'post_status'    => 'publish',
+			'posts_per_page' => 10,
+			'paged'          => $paged,
+		);
+
+		// Add search
+		if ( ! empty( $search ) ) {
+			$args['s'] = $search;
+		}
+
+		// Add meta query for filters
+		$meta_query = array();
+		if ( ! empty( $status_filter ) ) {
+			$meta_query[] = array(
+				'key'     => '_aidc_status',
+				'value'   => $status_filter,
+				'compare' => '=',
+			);
+		}
+		if ( ! empty( $owner_filter ) ) {
+			$meta_query[] = array(
+				'key'     => '_aidc_owner',
+				'value'   => $owner_filter,
+				'compare' => 'LIKE',
+			);
+		}
+		if ( ! empty( $meta_query ) ) {
+			$args['meta_query'] = $meta_query;
+		}
+
+		$query = new WP_Query( $args );
+
+		if ( $query->have_posts() ) : ?>
+			<div class="aidc-cards-grid">
+				<?php while ( $query->have_posts() ) : $query->the_post(); ?>
+					<div class="aidc-card">
+						<h3 class="aidc-card-title">
+							<a href="<?php echo esc_url( get_permalink() ); ?>" target="_blank">
+								<?php the_title(); ?>
+							</a>
+						</h3>
+						
+						<?php
+						$status = get_post_meta( get_the_ID(), '_aidc_status', true );
+						$owner = get_post_meta( get_the_ID(), '_aidc_owner', true );
+						$due = get_post_meta( get_the_ID(), '_aidc_due', true );
+						?>
+						
+						<div class="aidc-card-meta">
+							<span class="aidc-status aidc-status-<?php echo esc_attr( strtolower( $status ) ); ?>">
+								<?php echo $status ? esc_html( $status ) : 'TBD'; ?>
+							</span>
+							<?php if ( $owner ) : ?>
+								<span class="aidc-owner"><?php esc_html_e( 'Owner:', 'ai-decision-cards' ); ?> <?php echo esc_html( $owner ); ?></span>
+							<?php endif; ?>
+							<?php if ( $due ) : ?>
+								<span class="aidc-due"><?php esc_html_e( 'Due:', 'ai-decision-cards' ); ?> <?php echo esc_html( $due ); ?></span>
+							<?php endif; ?>
+						</div>
+						
+						<div class="aidc-card-excerpt">
+							<?php
+							$content = get_the_content();
+							// Extract summary or first paragraph
+							if ( preg_match( '/<h2>Summary<\/h2>\s*<ul>(.*?)<\/ul>/s', $content, $matches ) ) {
+								echo wp_kses_post( $matches[1] );
+							} else {
+								echo wp_trim_words( wp_strip_all_tags( $content ), 20 );
+							}
+							?>
+						</div>
+						
+						<div class="aidc-card-date">
+							<?php echo get_the_date(); ?>
+						</div>
+					</div>
+				<?php endwhile; ?>
+			</div>
+
+			<?php
+			// Pagination
+			if ( $query->max_num_pages > 1 ) :
+				$current_url = remove_query_arg( 'paged' );
+				?>
+				<div class="aidc-pagination">
+					<?php for ( $i = 1; $i <= $query->max_num_pages; $i++ ) : ?>
+						<?php if ( $i == $paged ) : ?>
+							<span class="current"><?php echo $i; ?></span>
+						<?php else : ?>
+							<a href="<?php echo esc_url( add_query_arg( 'paged', $i, $current_url ) ); ?>"><?php echo $i; ?></a>
+						<?php endif; ?>
+					<?php endfor; ?>
+				</div>
+			<?php endif; ?>
+
+		<?php else : ?>
+			<div class="aidc-no-cards">
+				<p><?php esc_html_e( 'No Decision Cards found.', 'ai-decision-cards' ); ?></p>
+				<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=decision_card&page=aidc_generate' ) ); ?>"><?php esc_html_e( 'Generate your first Decision Card', 'ai-decision-cards' ); ?></a></p>
+			</div>
+		<?php endif;
+
+		wp_reset_postdata();
+	}
+
+	/**
+	 * Render search and filter form.
+	 *
+	 * @since 1.0.0
+	 */
+	private function render_search_filters() {
+		$search = isset( $_GET['search'] ) ? sanitize_text_field( $_GET['search'] ) : '';
+		$status_filter = isset( $_GET['status'] ) ? sanitize_text_field( $_GET['status'] ) : '';
+		$owner_filter = isset( $_GET['owner'] ) ? sanitize_text_field( $_GET['owner'] ) : '';
+		?>
+		<div class="aidc-filters">
+			<form method="get" class="aidc-filter-form">
+				<input type="hidden" name="page" value="decision-cards-display">
+				
+				<div class="aidc-filter-group">
+					<input type="text" 
+						   name="search" 
+						   value="<?php echo esc_attr( $search ); ?>" 
+						   placeholder="<?php esc_attr_e( 'Search decision cards...', 'ai-decision-cards' ); ?>"
+						   class="aidc-search-input">
+				</div>
+				
+				<div class="aidc-filter-group">
+					<select name="status" class="aidc-filter-select">
+						<option value=""><?php esc_html_e( 'All Statuses', 'ai-decision-cards' ); ?></option>
+						<option value="Proposed" <?php selected( $status_filter, 'Proposed' ); ?>><?php esc_html_e( 'Proposed', 'ai-decision-cards' ); ?></option>
+						<option value="Approved" <?php selected( $status_filter, 'Approved' ); ?>><?php esc_html_e( 'Approved', 'ai-decision-cards' ); ?></option>
+						<option value="Rejected" <?php selected( $status_filter, 'Rejected' ); ?>><?php esc_html_e( 'Rejected', 'ai-decision-cards' ); ?></option>
+					</select>
+				</div>
+				
+				<div class="aidc-filter-group">
+					<input type="text" 
+						   name="owner" 
+						   value="<?php echo esc_attr( $owner_filter ); ?>" 
+						   placeholder="<?php esc_attr_e( 'Filter by owner...', 'ai-decision-cards' ); ?>"
+						   class="aidc-owner-input">
+				</div>
+				
+				<div class="aidc-filter-group">
+					<button type="submit" class="aidc-filter-button"><?php esc_html_e( 'Filter', 'ai-decision-cards' ); ?></button>
+					<a href="?page=decision-cards-display" class="aidc-clear-button"><?php esc_html_e( 'Clear', 'ai-decision-cards' ); ?></a>
+				</div>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render CSS styles for display page.
+	 *
+	 * @since 1.0.0
+	 */
+	private function render_display_styles() {
+		?>
+		<style>
+			.aidc-public-display {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+				line-height: 1.6;
+				color: #333;
+				background-color: #f9f9f9;
+				margin: 0;
+				padding: 0;
+			}
+			
+			.aidc-container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			
+			.aidc-header {
+				text-align: center;
+				margin-bottom: 30px;
+				padding: 20px;
+				background: white;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			}
+			
+			.aidc-header h1 {
+				margin: 0 0 10px 0;
+				color: #2c3e50;
+				font-size: 2.5em;
+			}
+			
+			.aidc-filters {
+				background: white;
+				padding: 20px;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+				margin-bottom: 20px;
+			}
+			
+			.aidc-filter-form {
+				display: flex;
+				gap: 15px;
+				flex-wrap: wrap;
+				align-items: center;
+			}
+			
+			.aidc-filter-group {
+				display: flex;
+				align-items: center;
+			}
+			
+			.aidc-search-input,
+			.aidc-owner-input,
+			.aidc-filter-select {
+				padding: 8px 12px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				font-size: 14px;
+			}
+			
+			.aidc-search-input {
+				width: 250px;
+			}
+			
+			.aidc-owner-input {
+				width: 150px;
+			}
+			
+			.aidc-filter-button {
+				background: #0073aa;
+				color: white;
+				padding: 8px 16px;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 14px;
+			}
+			
+			.aidc-filter-button:hover {
+				background: #005a87;
+			}
+			
+			.aidc-clear-button {
+				color: #666;
+				text-decoration: none;
+				margin-left: 10px;
+				padding: 8px 16px;
+			}
+			
+			.aidc-clear-button:hover {
+				color: #000;
+			}
+			
+			.aidc-cards-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+				gap: 20px;
+				margin-bottom: 30px;
+			}
+			
+			.aidc-card {
+				background: white;
+				padding: 20px;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+				transition: box-shadow 0.2s ease;
+			}
+			
+			.aidc-card:hover {
+				box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+			}
+			
+			.aidc-card-title {
+				margin: 0 0 15px 0;
+				font-size: 1.2em;
+			}
+			
+			.aidc-card-title a {
+				color: #2c3e50;
+				text-decoration: none;
+			}
+			
+			.aidc-card-title a:hover {
+				color: #0073aa;
+			}
+			
+			.aidc-card-meta {
+				margin-bottom: 15px;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 10px;
+				align-items: center;
+			}
+			
+			.aidc-status {
+				padding: 4px 8px;
+				border-radius: 4px;
+				font-size: 12px;
+				font-weight: bold;
+				text-transform: uppercase;
+			}
+			
+			.aidc-status-proposed {
+				background: #fff3cd;
+				color: #856404;
+			}
+			
+			.aidc-status-approved {
+				background: #d4edda;
+				color: #155724;
+			}
+			
+			.aidc-status-rejected {
+				background: #f8d7da;
+				color: #721c24;
+			}
+			
+			.aidc-owner,
+			.aidc-due {
+				font-size: 12px;
+				color: #666;
+			}
+			
+			.aidc-card-excerpt {
+				color: #555;
+				margin-bottom: 15px;
+				line-height: 1.5;
+			}
+			
+			.aidc-card-excerpt ul {
+				margin: 0;
+				padding-left: 20px;
+			}
+			
+			.aidc-card-date {
+				font-size: 12px;
+				color: #999;
+				text-align: right;
+			}
+			
+			.aidc-pagination {
+				display: flex;
+				justify-content: center;
+				gap: 10px;
+				padding: 20px 0;
+			}
+			
+			.aidc-pagination a,
+			.aidc-pagination .current {
+				padding: 8px 12px;
+				border: 1px solid #ddd;
+				text-decoration: none;
+				color: #0073aa;
+				border-radius: 4px;
+			}
+			
+			.aidc-pagination .current {
+				background: #0073aa;
+				color: white;
+				border-color: #0073aa;
+			}
+			
+			.aidc-pagination a:hover {
+				background: #f0f0f0;
+			}
+			
+			.aidc-no-cards {
+				text-align: center;
+				padding: 40px;
+				background: white;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			}
+			
+			.aidc-no-cards a {
+				color: #0073aa;
+				text-decoration: none;
+			}
+			
+			.aidc-no-cards a:hover {
+				text-decoration: underline;
+			}
+			
+			.aidc-embed-info {
+				background: #fff;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+				margin-bottom: 20px;
+				overflow: hidden;
+			}
+			
+			.aidc-embed-toggle {
+				background: #f0f8ff;
+				border-bottom: 1px solid #e0e0e0;
+			}
+			
+			.aidc-embed-button {
+				width: 100%;
+				padding: 15px 20px;
+				background: none;
+				border: none;
+				text-align: left;
+				cursor: pointer;
+				font-size: 14px;
+				font-weight: 500;
+				color: #2c3e50;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				transition: background-color 0.2s ease;
+			}
+			
+			.aidc-embed-button:hover {
+				background: rgba(0,123,255,0.1);
+			}
+			
+			.aidc-embed-button .dashicons {
+				font-size: 16px;
+				width: 16px;
+				height: 16px;
+			}
+			
+			.aidc-embed-content {
+				padding: 20px;
+			}
+			
+			.aidc-embed-content h3 {
+				margin: 0 0 15px 0;
+				color: #2c3e50;
+			}
+			
+			.aidc-embed-examples {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+				gap: 15px;
+				margin: 20px 0;
+			}
+			
+			.aidc-embed-example {
+				background: #f9f9f9;
+				padding: 15px;
+				border-radius: 6px;
+				border-left: 4px solid #0073aa;
+			}
+			
+			.aidc-embed-example h4 {
+				margin: 0 0 8px 0;
+				font-size: 14px;
+				color: #2c3e50;
+			}
+			
+			.aidc-embed-example code {
+				display: block;
+				background: #333;
+				color: #fff;
+				padding: 8px 12px;
+				border-radius: 4px;
+				font-family: 'Courier New', monospace;
+				font-size: 13px;
+				margin: 8px 0;
+				word-break: break-all;
+			}
+			
+			.aidc-embed-example p {
+				margin: 8px 0 0 0;
+				font-size: 12px;
+				color: #666;
+			}
+			
+			.aidc-guide-link {
+				color: #0073aa;
+				text-decoration: none;
+				font-weight: 500;
+			}
+			
+			.aidc-guide-link:hover {
+				text-decoration: underline;
+			}
+			
+			@media (max-width: 768px) {
+				.aidc-cards-grid {
+					grid-template-columns: 1fr;
+				}
+				
+				.aidc-filter-form {
+					flex-direction: column;
+					align-items: stretch;
+				}
+				
+				.aidc-filter-group {
+					justify-content: center;
+				}
+				
+				.aidc-search-input,
+				.aidc-owner-input {
+					width: 100%;
+					max-width: 300px;
+				}
+				
+				.aidc-embed-examples {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+		
+		<script>
+			function toggleEmbedInfo() {
+				const content = document.getElementById('aidc-embed-content');
+				const button = document.querySelector('.aidc-embed-button');
+				
+				if (content.style.display === 'none') {
+					content.style.display = 'block';
+					button.setAttribute('aria-expanded', 'true');
+				} else {
+					content.style.display = 'none';
+					button.setAttribute('aria-expanded', 'false');
+				}
+			}
+		</script>
+		<?php
 	}
 
 	/**
