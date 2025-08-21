@@ -41,14 +41,29 @@ SlackConversaton2DecisionCardPlugin/
   - **Risks/Assumptions**: Identified concerns or assumptions
 - **📊 Meta Banner**: Visual status display (Status | Owner | Target) at top of each card
 - **📅 Smart Date Handling**: Automatically processes relative dates ("next week") with follow-up tasks
+- **🎨 Public Display Pages**: Dedicated pages for showcasing Decision Cards to website visitors
+- **🔗 Shortcode Support**: Flexible embedding options for pages and posts
+  - `[decision-cards-list]` - Display filterable grid of Decision Cards
+  - `[decision-card id="123"]` - Embed specific Decision Card
+- **📖 Comprehensive User Guidance**: Built-in documentation and copy-paste shortcodes
 - **👀 Preview Functionality**: Full preview capability for generated Decision Cards
 - **🎛️ Admin Interface**: Simple form-based conversation input with metadata fields
 - **🔌 Multiple AI Providers**: Supports OpenAI and OpenAI-compatible APIs (OpenRouter, Azure)
 - **📝 Draft Workflow**: Generated cards saved as drafts for review and editing
 
-## 🎉 Latest Updates (v1.1)
+## 🎉 Latest Updates (v1.2)
 
-### ✨ Major Feature Upgrades
+### 🔗 Shortcode & Display Features
+- **Comprehensive Shortcode System**: Full embedding support for Decision Cards
+  - `[decision-cards-list]` with filtering, pagination, and search
+  - `[decision-card id="123"]` for single card embedding
+  - Parameters: `limit`, `status`, `owner`, `show_meta`, `excerpt_only`
+- **Public Display Pages**: Dedicated showcase pages for website visitors
+- **User Guidance Integration**: Built-in documentation in Settings page
+- **Edit Screen Shortcuts**: Copy-paste shortcodes directly from Decision Card editor
+- **Responsive Design**: Mobile-friendly display for all shortcode outputs
+
+### ✨ Previous Major Upgrades (v1.1)
 - **Fixed 5-Section Structure**: All Decision Cards now follow consistent format
 - **Visual Meta Banner**: Status/Owner/Target display at top of each card
 - **Intelligent Date Processing**: Handles "next week", "week after" with automatic follow-ups
@@ -57,7 +72,9 @@ SlackConversaton2DecisionCardPlugin/
 
 ### 🔧 Technical Improvements
 - **Direct HTML Output**: AI now generates HTML directly instead of Markdown for perfect rendering
-- Simplified content processing trusting AI HTML output
+- **Advanced Shortcode Engine**: Flexible parameter system with error handling
+- **Public Display Infrastructure**: Complete page system with search and filtering
+- **Enhanced User Experience**: Interactive elements and guided workflows
 - Enhanced HTML tag support for better formatting
 - Public post type visibility for preview functionality
 - Improved accessibility with proper contrast ratios

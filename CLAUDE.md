@@ -11,6 +11,9 @@ This is a WordPress plugin that converts Slack-style conversations into summariz
 - Fixed-format Decision Cards (Decision/Summary/Action Items/Sources/Risks/Assumptions)
 - Meta banner displaying Status/Owner/Target at top of Decision Cards
 - Intelligent relative date handling with automatic follow-up tasks
+- Comprehensive shortcode system for embedding Decision Cards
+- Public display pages with search, filtering, and pagination
+- Built-in user guidance and documentation
 - Admin interface for inputting conversations with preview functionality
 - Structured metadata (Status, Owner, Due Date)
 - Error handling and logging
@@ -31,8 +34,12 @@ When testing, use various conversation inputs to ensure:
 - Relative date handling creates appropriate follow-up tasks
 - Custom fields save correctly
 - Preview functionality works for generated Decision Cards
-- Error handling works (invalid API keys, empty input, etc.)
+- Shortcode functionality works correctly with all parameters
+- Public display pages show cards with proper search and filtering
+- User guidance appears correctly in Settings and edit screens
+- Error handling works (invalid API keys, empty input, invalid shortcode parameters)
 - Performance is acceptable for typical API call durations
+- Responsive design works on mobile and desktop devices
 
 ## Commands
 
@@ -56,22 +63,38 @@ This project follows standard WordPress plugin development practices:
 - **Main Plugin File**: `ai-decision-cards/ai-decision-cards.php` contains the core plugin logic
 - **Custom Post Type**: `decision_card` for storing generated decision records (public visibility enabled for preview)
 - **Admin Pages**: Settings page for API configuration and generation interface
+- **Public Display Pages**: Dedicated showcase pages accessible to all website visitors
+- **Shortcode System**: Two main shortcodes with comprehensive parameter support
+  - `[decision-cards-list]` for grid display with filtering and pagination
+  - `[decision-card id="X"]` for single card embedding with display options
 - **API Integration**: Supports OpenAI and OpenAI-compatible services (OpenRouter, Azure OpenAI)
 - **Metadata Fields**: Status (Proposed/Approved/Rejected), Owner, Due Date
 - **Content Structure**: Fixed 5-section HTML format enforced by AI prompt
 - **Meta Banner**: Displays at top of Decision Cards via `the_content` filter
 - **Relative Date Processing**: AI automatically detects and handles relative time phrases
+- **User Guidance**: Built-in documentation system in Settings page and edit screens
 
-## Latest Upgrades (v1.1)
+## Latest Upgrades (v1.2)
 
-### Fixed Structure Output
+### Shortcode & Display System
+- **Comprehensive Shortcode Support**: Two powerful shortcodes for flexible embedding
+  - `[decision-cards-list]` with filtering, pagination, search, and responsive design
+  - `[decision-card id="X"]` for single card embedding with display options
+- **Public Display Pages**: Dedicated showcase pages with full functionality
+- **User Guidance Integration**: Built-in documentation and copy-paste shortcuts
+- **Edit Screen Enhancements**: Shortcode meta box with one-click selection
+- **Responsive Design**: Mobile-friendly display for all components
+
+### Previous Major Upgrades (v1.1)
+
+#### Fixed Structure Output
 - **Decision**: One-sentence summary of what was decided
 - **Summary**: Exactly 3 concise bullet points with key rationale
 - **Action Items**: Task list with owners and due dates, automatic relative date handling
 - **Sources**: 2-3 quoted lines from original conversation with timestamps
 - **Risks/Assumptions**: Identified risks or assumptions, "None" if not applicable
 
-### Meta Banner
+#### Meta Banner
 - Displays Status | Owner | Target at top of each Decision Card
 - Shows "TBD" for empty fields
 - Accessible styling with proper contrast ratios
@@ -79,8 +102,10 @@ This project follows standard WordPress plugin development practices:
 
 ### Technical Improvements
 - **Direct HTML Generation**: AI prompt modified to output HTML directly instead of Markdown for perfect rendering
+- **Advanced Shortcode Engine**: Flexible parameter system with comprehensive error handling
+- **Public Display Infrastructure**: Complete page system with search, filtering, and pagination
+- **Enhanced User Experience**: Interactive guidance and streamlined workflows
 - Increased max_tokens to 600 for better AI responses
-- Simplified content processing to trust AI HTML output
 - Enhanced wp_kses whitelist for proper HTML tag support
 - Public post type visibility for preview functionality
 
