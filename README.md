@@ -51,7 +51,14 @@ SlackConversaton2DecisionCardPlugin/
 - **🔌 Multiple AI Providers**: Supports OpenAI and OpenAI-compatible APIs (OpenRouter)
 - **📝 Draft Workflow**: Generated cards saved as drafts for review and editing
 
-## 🎉 Latest Updates (v1.2.0 - Current Version)
+## 🎉 Latest Updates (v1.2.1 - Current Version)
+
+### v1.2.1
+- Internationalization: Text domain loaded and `.pot` template prepared for translators
+- Admin assets: Scoped enqueue of public/admin CSS/JS; expanded localized UI strings
+- Public display: Added top-level menu and auto-created public page using `[decision-cards-list]`
+- UX: Clearer filters on public display with a Reset link; better query param preservation in forms
+- Stability: Extra sanitization and guard checks in request handling
 
 ### 🔗 Shortcode & Display Features
 - **Comprehensive Shortcode System**: Full embedding support for Decision Cards

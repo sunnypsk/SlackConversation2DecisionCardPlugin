@@ -1,0 +1,610 @@
+# Copyright (C) 2025 Sunny Poon
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: AI Decision Cards 1.2.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ai-decision-cards\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-08-21T08:19:06+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: ai-decision-cards\n"
+
+#. Plugin Name of the plugin
+#: ai-decision-cards.php
+msgid "AI Decision Cards"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: ai-decision-cards.php
+msgid "https://github.com/sunnypoon/SlackConversation2DecisionCardPlugin"
+msgstr ""
+
+#. Description of the plugin
+#: ai-decision-cards.php
+msgid "Convert Slack-style conversations into AI-generated Decision Cards with summaries and action items using OpenAI-compatible APIs."
+msgstr ""
+
+#. Author of the plugin
+#: ai-decision-cards.php
+msgid "Sunny Poon"
+msgstr ""
+
+#: ai-decision-cards.php:137
+msgctxt "Post Type General Name"
+msgid "Decision Cards"
+msgstr ""
+
+#: ai-decision-cards.php:138
+msgctxt "Post Type Singular Name"
+msgid "Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:139
+#: ai-decision-cards.php:1331
+#: ai-decision-cards.php:1632
+msgid "Decision Cards"
+msgstr ""
+
+#: ai-decision-cards.php:140
+#: ai-decision-cards.php:167
+msgid "Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:141
+msgid "Decision Archives"
+msgstr ""
+
+#: ai-decision-cards.php:142
+msgid "Decision Attributes"
+msgstr ""
+
+#: ai-decision-cards.php:143
+msgid "Parent Decision:"
+msgstr ""
+
+#: ai-decision-cards.php:144
+msgid "All Decisions"
+msgstr ""
+
+#: ai-decision-cards.php:145
+msgid "Add New Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:146
+msgid "Add New"
+msgstr ""
+
+#: ai-decision-cards.php:147
+msgid "New Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:148
+msgid "Edit Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:149
+msgid "Update Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:150
+msgid "View Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:151
+msgid "View Decision Cards"
+msgstr ""
+
+#: ai-decision-cards.php:152
+msgid "Search Decision Cards"
+msgstr ""
+
+#: ai-decision-cards.php:153
+msgid "No Decision Cards found"
+msgstr ""
+
+#: ai-decision-cards.php:154
+msgid "No Decision Cards found in Trash"
+msgstr ""
+
+#: ai-decision-cards.php:155
+msgid "Featured Image"
+msgstr ""
+
+#: ai-decision-cards.php:156
+msgid "Set featured image"
+msgstr ""
+
+#: ai-decision-cards.php:157
+msgid "Remove featured image"
+msgstr ""
+
+#: ai-decision-cards.php:158
+msgid "Use as featured image"
+msgstr ""
+
+#: ai-decision-cards.php:159
+msgid "Insert into Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:160
+msgid "Uploaded to this Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:161
+msgid "Decision Cards list"
+msgstr ""
+
+#: ai-decision-cards.php:162
+msgid "Decision Cards list navigation"
+msgstr ""
+
+#: ai-decision-cards.php:163
+msgid "Filter Decision Cards list"
+msgstr ""
+
+#: ai-decision-cards.php:168
+msgid "AI-generated decision summaries from conversations"
+msgstr ""
+
+#: ai-decision-cards.php:308
+#: ai-decision-cards.php:1527
+msgid "Search decision cards..."
+msgstr ""
+
+#: ai-decision-cards.php:310
+#: ai-decision-cards.php:1533
+msgid "All Statuses"
+msgstr ""
+
+#: ai-decision-cards.php:311
+#: ai-decision-cards.php:1534
+msgid "Proposed"
+msgstr ""
+
+#: ai-decision-cards.php:312
+#: ai-decision-cards.php:1535
+msgid "Approved"
+msgstr ""
+
+#: ai-decision-cards.php:313
+#: ai-decision-cards.php:1536
+msgid "Rejected"
+msgstr ""
+
+#: ai-decision-cards.php:315
+#: ai-decision-cards.php:1544
+msgid "Filter by owner..."
+msgstr ""
+
+#: ai-decision-cards.php:316
+#: ai-decision-cards.php:1549
+msgid "Filter"
+msgstr ""
+
+#: ai-decision-cards.php:338
+#: ai-decision-cards.php:1457
+msgid "Owner:"
+msgstr ""
+
+#: ai-decision-cards.php:341
+#: ai-decision-cards.php:1460
+msgid "Due:"
+msgstr ""
+
+#: ai-decision-cards.php:364
+#: ai-decision-cards.php:1501
+msgid "No Decision Cards found."
+msgstr ""
+
+#: ai-decision-cards.php:395
+msgid "Error: Decision Card ID is required."
+msgstr ""
+
+#: ai-decision-cards.php:401
+msgid "Error: Decision Card not found or not published."
+msgstr ""
+
+#. translators: %1$s: status, %2$s: owner, %3$s: due date
+#: ai-decision-cards.php:421
+#: ai-decision-cards.php:1295
+#, php-format
+msgid "Status: %1$s | Owner: %2$s | Target: %3$s"
+msgstr ""
+
+#: ai-decision-cards.php:458
+msgid "View Full Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:477
+msgid "Embed This Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:494
+msgid "Use these shortcodes to embed this Decision Card in pages or posts:"
+msgstr ""
+
+#: ai-decision-cards.php:498
+msgid "Full Decision Card:"
+msgstr ""
+
+#: ai-decision-cards.php:506
+msgid "Displays the complete Decision Card with status banner"
+msgstr ""
+
+#: ai-decision-cards.php:512
+msgid "Summary Only:"
+msgstr ""
+
+#: ai-decision-cards.php:520
+msgid "Shows only the summary section for quick reference"
+msgstr ""
+
+#: ai-decision-cards.php:526
+msgid "Without Status Banner:"
+msgstr ""
+
+#: ai-decision-cards.php:534
+msgid "Hides the status banner for cleaner display"
+msgstr ""
+
+#: ai-decision-cards.php:540
+msgid "How to use:"
+msgstr ""
+
+#: ai-decision-cards.php:541
+msgid "Click any shortcode above to select it, then copy (Ctrl+C) and paste into your page editor."
+msgstr ""
+
+#: ai-decision-cards.php:547
+#: ai-decision-cards.php:1368
+msgid "View Complete Shortcode Guide →"
+msgstr ""
+
+#: ai-decision-cards.php:613
+#: ai-decision-cards.php:614
+msgid "Generate from Conversation"
+msgstr ""
+
+#: ai-decision-cards.php:623
+#: ai-decision-cards.php:624
+#: ai-decision-cards.php:944
+msgid "Settings"
+msgstr ""
+
+#: ai-decision-cards.php:633
+#: ai-decision-cards.php:634
+msgid "View Public Display"
+msgstr ""
+
+#: ai-decision-cards.php:642
+#: ai-decision-cards.php:643
+#: ai-decision-cards.php:1313
+msgid "Decision Cards Display"
+msgstr ""
+
+#: ai-decision-cards.php:709
+msgid "Please enter an API key first."
+msgstr ""
+
+#: ai-decision-cards.php:710
+msgid "Testing..."
+msgstr ""
+
+#: ai-decision-cards.php:711
+msgid "Testing API connection..."
+msgstr ""
+
+#: ai-decision-cards.php:712
+#: ai-decision-cards.php:858
+msgid "Test API Key"
+msgstr ""
+
+#: ai-decision-cards.php:713
+msgid "Please enter a conversation before generating."
+msgstr ""
+
+#: ai-decision-cards.php:714
+msgid "Generating... Please wait"
+msgstr ""
+
+#: ai-decision-cards.php:715
+msgid "AI is analyzing your conversation and creating a decision card... This may take 10-30 seconds."
+msgstr ""
+
+#: ai-decision-cards.php:716
+msgid "Taking longer than expected. Please check your API settings or try again."
+msgstr ""
+
+#: ai-decision-cards.php:717
+msgid "Generate Summary & Create Draft"
+msgstr ""
+
+#: ai-decision-cards.php:791
+msgid "AI Decision Cards — Settings"
+msgstr ""
+
+#: ai-decision-cards.php:794
+msgid "Settings saved."
+msgstr ""
+
+#: ai-decision-cards.php:802
+msgid "API Type"
+msgstr ""
+
+#: ai-decision-cards.php:807
+msgid "OpenAI Compatible"
+msgstr ""
+
+#: ai-decision-cards.php:811
+msgid "Choose your AI service provider."
+msgstr ""
+
+#: ai-decision-cards.php:817
+msgid "API Key"
+msgstr ""
+
+#: ai-decision-cards.php:824
+msgid "Your API key for OpenAI, OpenRouter, or other compatible services."
+msgstr ""
+
+#: ai-decision-cards.php:830
+msgid "API Base URL"
+msgstr ""
+
+#: ai-decision-cards.php:837
+msgid "Example: https://api.openai.com/ or https://openrouter.ai/api/v1/"
+msgstr ""
+
+#: ai-decision-cards.php:843
+msgid "Model"
+msgstr ""
+
+#: ai-decision-cards.php:850
+msgid "Example: gpt-3.5-turbo, gpt-4, claude-3-haiku, etc."
+msgstr ""
+
+#: ai-decision-cards.php:856
+msgid "Save Settings"
+msgstr ""
+
+#: ai-decision-cards.php:868
+msgid "Shortcode Usage Guide"
+msgstr ""
+
+#: ai-decision-cards.php:869
+msgid "Use these shortcodes to display Decision Cards on your website pages and posts."
+msgstr ""
+
+#: ai-decision-cards.php:872
+msgid "Display Decision Cards List"
+msgstr ""
+
+#: ai-decision-cards.php:873
+msgid "Show a grid of Decision Cards with optional filtering:"
+msgstr ""
+
+#: ai-decision-cards.php:876
+msgid "— Display all Decision Cards"
+msgstr ""
+
+#: ai-decision-cards.php:877
+msgid "— Show only 5 cards"
+msgstr ""
+
+#: ai-decision-cards.php:878
+msgid "— Show only approved cards"
+msgstr ""
+
+#: ai-decision-cards.php:879
+msgid "— Filter by owner"
+msgstr ""
+
+#: ai-decision-cards.php:880
+msgid "— Hide search filters"
+msgstr ""
+
+#: ai-decision-cards.php:883
+#: ai-decision-cards.php:903
+msgid "Available Parameters:"
+msgstr ""
+
+#: ai-decision-cards.php:885
+msgid "Number of cards to display (1-50, default: 10)"
+msgstr ""
+
+#: ai-decision-cards.php:886
+msgid "Filter by status (Proposed, Approved, Rejected)"
+msgstr ""
+
+#: ai-decision-cards.php:887
+msgid "Filter by owner name"
+msgstr ""
+
+#: ai-decision-cards.php:888
+msgid "Search in card titles and content"
+msgstr ""
+
+#: ai-decision-cards.php:889
+msgid "Show/hide filter form (yes/no, default: yes)"
+msgstr ""
+
+#: ai-decision-cards.php:894
+msgid "Display Single Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:895
+msgid "Embed a specific Decision Card by its ID:"
+msgstr ""
+
+#: ai-decision-cards.php:898
+msgid "— Display full Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:899
+msgid "— Show only summary"
+msgstr ""
+
+#: ai-decision-cards.php:900
+msgid "— Hide status banner"
+msgstr ""
+
+#: ai-decision-cards.php:905
+msgid "Decision Card ID (required - find this in the URL when editing)"
+msgstr ""
+
+#: ai-decision-cards.php:906
+msgid "Show status banner (yes/no, default: yes)"
+msgstr ""
+
+#: ai-decision-cards.php:907
+msgid "Show only summary instead of full content (yes/no, default: no)"
+msgstr ""
+
+#: ai-decision-cards.php:912
+msgid "Quick Copy"
+msgstr ""
+
+#: ai-decision-cards.php:913
+msgid "You can copy these shortcodes and paste them directly into any page or post editor."
+msgstr ""
+
+#: ai-decision-cards.php:914
+msgid "To find a Decision Card ID, edit the card and look at the URL: ...&post=123 (where 123 is the ID)"
+msgstr ""
+
+#: ai-decision-cards.php:934
+msgid "Generate Decision Card from Conversation"
+msgstr ""
+
+#: ai-decision-cards.php:935
+msgid "Paste a Slack-like conversation transcript. The plugin will create a Decision Card draft with an AI-generated summary and action items."
+msgstr ""
+
+#: ai-decision-cards.php:939
+msgid "API key missing."
+msgstr ""
+
+#. translators: %s: Settings page URL
+#: ai-decision-cards.php:943
+#, php-format
+msgid "Please set your OpenAI-compatible API key in %s."
+msgstr ""
+
+#: ai-decision-cards.php:1126
+msgid "Insufficient permissions."
+msgstr ""
+
+#: ai-decision-cards.php:1130
+msgid "Security check failed."
+msgstr ""
+
+#: ai-decision-cards.php:1141
+msgid "API key is required."
+msgstr ""
+
+#: ai-decision-cards.php:1145
+msgid "API base URL is required."
+msgstr ""
+
+#: ai-decision-cards.php:1149
+msgid "Model is required."
+msgstr ""
+
+#. translators: %s: Error message
+#: ai-decision-cards.php:1195
+#, php-format
+msgid "Connection failed: %s"
+msgstr ""
+
+#. translators: %1$d: HTTP status code, %2$s: Response body
+#: ai-decision-cards.php:1215
+#, php-format
+msgid "HTTP %1$d: %2$s"
+msgstr ""
+
+#. translators: %s: API endpoint URL
+#: ai-decision-cards.php:1225
+#, php-format
+msgid " (Endpoint: %s)"
+msgstr ""
+
+#. translators: %s: Error message
+#: ai-decision-cards.php:1234
+#, php-format
+msgid "API Error: %s"
+msgstr ""
+
+#: ai-decision-cards.php:1243
+msgid "Invalid JSON response from API."
+msgstr ""
+
+#: ai-decision-cards.php:1248
+msgid "Unexpected API response format."
+msgstr ""
+
+#. translators: %s: API provider name
+#: ai-decision-cards.php:1256
+#, php-format
+msgid "✓ API connection successful! Connected to %s."
+msgstr ""
+
+#: ai-decision-cards.php:1314
+msgid "Preview how Decision Cards appear to website visitors."
+msgstr ""
+
+#: ai-decision-cards.php:1315
+msgid "View Public Display Page"
+msgstr ""
+
+#: ai-decision-cards.php:1332
+msgid "AI-generated decision summaries from team conversations"
+msgstr ""
+
+#: ai-decision-cards.php:1339
+msgid "How to Embed These Cards"
+msgstr ""
+
+#: ai-decision-cards.php:1343
+msgid "Embed Decision Cards on Your Website"
+msgstr ""
+
+#: ai-decision-cards.php:1344
+msgid "You can easily embed these Decision Cards in your pages and posts using shortcodes:"
+msgstr ""
+
+#: ai-decision-cards.php:1348
+msgid "Display All Cards:"
+msgstr ""
+
+#: ai-decision-cards.php:1350
+msgid "Shows a grid of all Decision Cards with filtering options"
+msgstr ""
+
+#: ai-decision-cards.php:1354
+msgid "Display Specific Card:"
+msgstr ""
+
+#: ai-decision-cards.php:1356
+msgid "Shows a single Decision Card (replace 123 with the actual card ID)"
+msgstr ""
+
+#: ai-decision-cards.php:1360
+msgid "Filter by Status:"
+msgstr ""
+
+#: ai-decision-cards.php:1362
+msgid "Shows only approved Decision Cards"
+msgstr ""
+
+#: ai-decision-cards.php:1502
+msgid "Generate your first Decision Card"
+msgstr ""
+
+#: ai-decision-cards.php:1550
+msgid "Clear"
+msgstr ""

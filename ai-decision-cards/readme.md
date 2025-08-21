@@ -163,6 +163,13 @@ This plugin follows WordPress coding standards and best practices:
 
 ## Changelog
 
+### 1.2.1
+- **Internationalization**: Loaded text domain and prepared all strings for translation; initial `.pot` file added under `languages/`.
+- **Admin assets**: Properly enqueue public and admin CSS/JS only on plugin pages; expanded localized strings for UI messages.
+- **Public display**: Added a top-level "Decision Cards Display" menu with a quick link to a public page; auto-creation of a public page that uses `[decision-cards-list]` with its ID stored for reuse.
+- **UX improvements**: Clearer filter UI on public display (including a Clear button) and preserved non-AIDC query parameters in shortcode filter forms.
+- **Stability**: Additional sanitization and guard checks in request handling.
+
 ### 1.2.0
 - **Enhanced Shortcode System**: Comprehensive embedding options with `[decision-cards-list]` and `[decision-card]`
 - **Full-Text Search**: Enhanced search across all Decision Card content sections
