@@ -71,7 +71,7 @@ This project follows standard WordPress plugin development practices:
 - **Shortcode System**: Two main shortcodes with comprehensive parameter support
   - `[decision-cards-list]` for grid display with filtering and pagination
   - `[decision-card id="X"]` for single card embedding with display options
-- **API Integration**: Supports OpenAI and OpenAI-compatible services (OpenRouter, Azure OpenAI)
+- **API Integration**: Supports OpenAI and OpenAI-compatible services (OpenRouter)
 - **Metadata Fields**: Status (Proposed/Approved/Rejected), Owner, Due Date
 - **Content Structure**: Fixed 5-section HTML format enforced by AI prompt
 - **Meta Banner**: Displays at top of Decision Cards via `the_content` filter

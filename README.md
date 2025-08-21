@@ -48,7 +48,7 @@ SlackConversaton2DecisionCardPlugin/
 - **📖 Comprehensive User Guidance**: Built-in documentation and copy-paste shortcodes
 - **👀 Preview Functionality**: Full preview capability for generated Decision Cards
 - **🎛️ Admin Interface**: Simple form-based conversation input with metadata fields
-- **🔌 Multiple AI Providers**: Supports OpenAI and OpenAI-compatible APIs (OpenRouter, Azure)
+- **🔌 Multiple AI Providers**: Supports OpenAI and OpenAI-compatible APIs (OpenRouter)
 - **📝 Draft Workflow**: Generated cards saved as drafts for review and editing
 
 ## 🎉 Latest Updates (v1.2)
