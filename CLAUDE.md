@@ -78,7 +78,7 @@ This project follows standard WordPress plugin development practices:
 - **Relative Date Processing**: AI automatically detects and handles relative time phrases
 - **User Guidance**: Built-in documentation system in Settings page and edit screens
 
-## Latest Upgrades (v1.2)
+## Latest Upgrades (v1.2.0 - Current Version)
 
 ### Shortcode & Display System
 - **Comprehensive Shortcode Support**: Two powerful shortcodes for flexible embedding
