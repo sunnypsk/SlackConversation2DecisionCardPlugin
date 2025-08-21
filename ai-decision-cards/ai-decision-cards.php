@@ -220,6 +220,17 @@ class AIDC_Plugin {
 		$search = sanitize_text_field( $atts['search'] );
 		$show_filters = ( 'yes' === $atts['show_filters'] || 'true' === $atts['show_filters'] );
 
+		// Apply filters from query string when present
+		if ( isset( $_GET['aidc_search'] ) ) {
+			$search = sanitize_text_field( wp_unslash( $_GET['aidc_search'] ) );
+		}
+		if ( isset( $_GET['aidc_status'] ) ) {
+			$status = sanitize_text_field( wp_unslash( $_GET['aidc_status'] ) );
+		}
+		if ( isset( $_GET['aidc_owner'] ) ) {
+			$owner = sanitize_text_field( wp_unslash( $_GET['aidc_owner'] ) );
+		}
+
 		// Build query
 		$query_args = array(
 			'post_type'      => 'decision_card',
@@ -259,7 +270,25 @@ class AIDC_Plugin {
 		<div class="aidc-shortcode-wrapper">
 			<?php if ( $show_filters ) : ?>
 				<div class="aidc-shortcode-filters">
-					<form method="get" class="aidc-shortcode-filter-form">
+					<?php $aidc_action_url = esc_url( get_permalink( get_queried_object_id() ) ); ?>
+					<form method="get" action="<?php echo $aidc_action_url; ?>" class="aidc-shortcode-filter-form">
+						<?php
+						// Preserve non-AIDC query parameters (e.g., page_id) on submit
+						if ( ! empty( $_GET ) ) {
+							foreach ( $_GET as $aidc_qk => $aidc_qv ) {
+								if ( in_array( $aidc_qk, array( 'aidc_search', 'aidc_status', 'aidc_owner' ), true ) ) {
+									continue;
+								}
+								if ( is_array( $aidc_qv ) ) {
+									foreach ( $aidc_qv as $aidc_qv_item ) {
+										echo '<input type="hidden" name="' . esc_attr( $aidc_qk ) . '[]" value="' . esc_attr( wp_unslash( $aidc_qv_item ) ) . '" />';
+									}
+								} else {
+									echo '<input type="hidden" name="' . esc_attr( $aidc_qk ) . '" value="' . esc_attr( wp_unslash( $aidc_qv ) ) . '" />';
+								}
+							}
+						}
+						?>
 						<input type="text" name="aidc_search" value="<?php echo esc_attr( $_GET['aidc_search'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Search decision cards...', 'ai-decision-cards' ); ?>">
 						<select name="aidc_status">
 							<option value=""><?php esc_html_e( 'All Statuses', 'ai-decision-cards' ); ?></option>
@@ -267,6 +296,7 @@ class AIDC_Plugin {
 							<option value="Approved" <?php selected( $_GET['aidc_status'] ?? '', 'Approved' ); ?>><?php esc_html_e( 'Approved', 'ai-decision-cards' ); ?></option>
 							<option value="Rejected" <?php selected( $_GET['aidc_status'] ?? '', 'Rejected' ); ?>><?php esc_html_e( 'Rejected', 'ai-decision-cards' ); ?></option>
 						</select>
+						<input type="text" name="aidc_owner" value="<?php echo esc_attr( $_GET['aidc_owner'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Filter by owner...', 'ai-decision-cards' ); ?>">
 						<button type="submit"><?php esc_html_e( 'Filter', 'ai-decision-cards' ); ?></button>
 					</form>
 				</div>

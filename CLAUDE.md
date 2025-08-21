@@ -36,6 +36,9 @@ When testing, use various conversation inputs to ensure:
 - Preview functionality works for generated Decision Cards
 - Shortcode functionality works correctly with all parameters
 - Public display pages show cards with proper search and filtering
+- URL parameter integration works (e.g., `?aidc_search=term&aidc_status=Approved`)
+- Filter form preserves existing page parameters during submission
+- Owner filtering works alongside status and search filtering
 - User guidance appears correctly in Settings and edit screens
 - Error handling works (invalid API keys, empty input, invalid shortcode parameters)
 - Performance is acceptable for typical API call durations
@@ -80,6 +83,10 @@ This project follows standard WordPress plugin development practices:
 - **Comprehensive Shortcode Support**: Two powerful shortcodes for flexible embedding
   - `[decision-cards-list]` with filtering, pagination, search, and responsive design
   - `[decision-card id="X"]` for single card embedding with display options
+- **Enhanced URL Parameter Integration**: Shortcode filters now respond to URL query parameters
+  - `aidc_search`, `aidc_status`, `aidc_owner` parameters automatically applied
+  - Form state preservation maintains other query parameters during filtering
+- **Extended Owner Filtering**: Added owner field to filter forms for complete metadata filtering
 - **Public Display Pages**: Dedicated showcase pages with full functionality
 - **User Guidance Integration**: Built-in documentation and copy-paste shortcuts
 - **Edit Screen Enhancements**: Shortcode meta box with one-click selection
