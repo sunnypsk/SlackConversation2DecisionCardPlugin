@@ -920,9 +920,6 @@ class AIDC_Plugin {
 								<option value="openai" <?php selected( $this->esc_attr_val( self::OPTION_API_TYPE, 'openai' ), 'openai' ); ?>>
 									<?php esc_html_e( 'OpenAI Compatible', 'ai-decision-cards' ); ?>
 								</option>
-								<option value="azure" <?php selected( $this->esc_attr_val( self::OPTION_API_TYPE, 'openai' ), 'azure' ); ?>>
-									<?php esc_html_e( 'Azure OpenAI', 'ai-decision-cards' ); ?>
-								</option>
 							</select>
 							<p class="description">
 								<?php esc_html_e( 'Choose your AI service provider.', 'ai-decision-cards' ); ?>
@@ -988,21 +985,12 @@ class AIDC_Plugin {
 			const modelLabel = document.getElementById('model_label');
 			const modelDesc = document.getElementById('model_desc');
 			
-			if (apiType === 'azure') {
-				apiKeyLabel.textContent = '<?php esc_attr_e( "Azure OpenAI API Key", "ai-decision-cards" ); ?>';
-				apiKeyDesc.textContent = '<?php esc_attr_e( "Your Azure OpenAI API key from Azure portal.", "ai-decision-cards" ); ?>';
-				apiBaseLabel.textContent = '<?php esc_attr_e( "Azure Endpoint", "ai-decision-cards" ); ?>';
-				apiBaseDesc.textContent = '<?php esc_attr_e( "Example: https://your-resource.openai.azure.com/", "ai-decision-cards" ); ?>';
-				modelLabel.textContent = '<?php esc_attr_e( "Deployment Name", "ai-decision-cards" ); ?>';
-				modelDesc.textContent = '<?php esc_attr_e( "Your Azure OpenAI deployment name (e.g. gpt-35-turbo).", "ai-decision-cards" ); ?>';
-			} else {
-				apiKeyLabel.textContent = '<?php esc_attr_e( "API Key", "ai-decision-cards" ); ?>';
-				apiKeyDesc.textContent = '<?php esc_attr_e( "Your API key for OpenAI, OpenRouter, or other compatible services.", "ai-decision-cards" ); ?>';
-				apiBaseLabel.textContent = '<?php esc_attr_e( "API Base URL", "ai-decision-cards" ); ?>';
-				apiBaseDesc.textContent = '<?php esc_attr_e( "Example: https://api.openai.com/ or https://openrouter.ai/api/v1/", "ai-decision-cards" ); ?>';
-				modelLabel.textContent = '<?php esc_attr_e( "Model", "ai-decision-cards" ); ?>';
-				modelDesc.textContent = '<?php esc_attr_e( "Example: gpt-3.5-turbo, gpt-4, claude-3-haiku, etc.", "ai-decision-cards" ); ?>';
-			}
+			apiKeyLabel.textContent = '<?php esc_attr_e( "API Key", "ai-decision-cards" ); ?>';
+			apiKeyDesc.textContent = '<?php esc_attr_e( "Your API key for OpenAI, OpenRouter, or other compatible services.", "ai-decision-cards" ); ?>';
+			apiBaseLabel.textContent = '<?php esc_attr_e( "API Base URL", "ai-decision-cards" ); ?>';
+			apiBaseDesc.textContent = '<?php esc_attr_e( "Example: https://api.openai.com/ or https://openrouter.ai/api/v1/", "ai-decision-cards" ); ?>';
+			modelLabel.textContent = '<?php esc_attr_e( "Model", "ai-decision-cards" ); ?>';
+			modelDesc.textContent = '<?php esc_attr_e( "Example: gpt-3.5-turbo, gpt-4, claude-3-haiku, etc.", "ai-decision-cards" ); ?>';
 		}
 		
 		// Initialize on page load
@@ -1291,30 +1279,18 @@ Rules:
             ]
         ];
 
-        // Build endpoint and headers based on API type
-        if ($api_type === 'azure') {
-            // Azure OpenAI format: https://your-resource.openai.azure.com/openai/deployments/your-deployment/chat/completions?api-version=2024-02-01
-            $endpoint = $api_base . 'openai/deployments/' . $model . '/chat/completions?api-version=2024-02-01';
-            $headers = [
-                'api-key' => $api_key,
-                'Content-Type' => 'application/json'
-            ];
-            // Remove model from body for Azure
-            unset($body['model']);
+        // Build endpoint and headers for OpenAI Compatible format
+        if (strpos($api_base, '/v1/') !== false) {
+            // API base already contains v1 (e.g., OpenRouter)
+            $endpoint = $api_base . 'chat/completions';
         } else {
-            // OpenAI Compatible format - check if API base already contains v1
-            if (strpos($api_base, '/v1/') !== false) {
-                // API base already contains v1 (e.g., OpenRouter)
-                $endpoint = $api_base . 'chat/completions';
-            } else {
-                // Standard OpenAI format
-                $endpoint = $api_base . 'v1/chat/completions';
-            }
-            $headers = [
-                'Authorization' => 'Bearer ' . $api_key,
-                'Content-Type' => 'application/json'
-            ];
+            // Standard OpenAI format
+            $endpoint = $api_base . 'v1/chat/completions';
         }
+        $headers = [
+            'Authorization' => 'Bearer ' . $api_key,
+            'Content-Type' => 'application/json'
+        ];
 
         $args = [
             'headers' => $headers,
@@ -1414,30 +1390,18 @@ Rules:
 			)
 		);
 		
-		// Build endpoint and headers based on API type
-		if ( $api_type === 'azure' ) {
-			// Azure OpenAI format
-			$endpoint = $api_base . 'openai/deployments/' . $model . '/chat/completions?api-version=2024-02-01';
-			$headers = array(
-				'api-key' => $api_key,
-				'Content-Type' => 'application/json'
-			);
-			// Remove model from body for Azure
-			unset( $body['model'] );
+		// Build endpoint and headers for OpenAI Compatible format
+		if ( strpos( $api_base, '/v1/' ) !== false ) {
+			// API base already contains v1 (e.g., OpenRouter)
+			$endpoint = $api_base . 'chat/completions';
 		} else {
-			// OpenAI Compatible format - check if API base already contains v1
-			if ( strpos( $api_base, '/v1/' ) !== false ) {
-				// API base already contains v1 (e.g., OpenRouter)
-				$endpoint = $api_base . 'chat/completions';
-			} else {
-				// Standard OpenAI format
-				$endpoint = $api_base . 'v1/chat/completions';
-			}
-			$headers = array(
-				'Authorization' => 'Bearer ' . $api_key,
-				'Content-Type' => 'application/json'
-			);
+			// Standard OpenAI format
+			$endpoint = $api_base . 'v1/chat/completions';
 		}
+		$headers = array(
+			'Authorization' => 'Bearer ' . $api_key,
+			'Content-Type' => 'application/json'
+		);
 		
 		// Make the API request
 		$args = array(
@@ -1510,7 +1474,7 @@ Rules:
 		}
 		
 		// Success!
-		$provider_name = ( $api_type === 'azure' ) ? 'Azure OpenAI' : 'OpenAI Compatible API';
+		$provider_name = 'OpenAI Compatible API';
 		wp_send_json_success(
 			sprintf(
 				/* translators: %s: API provider name */
