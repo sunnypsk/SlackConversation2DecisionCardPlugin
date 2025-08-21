@@ -543,7 +543,7 @@ class AIDC_Plugin {
 			</div>
 			
 			<div style="margin-top: 15px;">
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=aidc_settings#shortcode-guide' ) ); ?>" target="_blank" style="text-decoration: none;">
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=aidc_shortcodes#shortcode-guide' ) ); ?>" target="_blank" style="text-decoration: none;">
 					<?php esc_html_e( 'View Complete Shortcode Guide →', 'ai-decision-cards' ); ?>
 				</a>
 			</div>
@@ -627,6 +627,26 @@ class AIDC_Plugin {
 			array( $this, 'render_settings_page' )
 		);
 
+		// Add Shortcode Usage Guide page under the Decision Cards post type menu
+		add_submenu_page(
+			'edit.php?post_type=decision_card',
+			__( 'Shortcode Usage Guide', 'ai-decision-cards' ),
+			__( 'Shortcode Usage Guide', 'ai-decision-cards' ),
+			'read',
+			'aidc_shortcodes',
+			array( $this, 'render_shortcodes_page' )
+		);
+
+		// Add Changelog page under the Decision Cards post type menu
+		add_submenu_page(
+			'edit.php?post_type=decision_card',
+			__( 'Changelog', 'ai-decision-cards' ),
+			__( 'Changelog', 'ai-decision-cards' ),
+			'read',
+			'aidc_changelog',
+			array( $this, 'render_changelog_page' )
+		);
+
 		// Add public Decision Cards Display page (accessible to everyone)
 		add_submenu_page(
 			'edit.php?post_type=decision_card',
@@ -660,11 +680,13 @@ class AIDC_Plugin {
 		if ( ! $screen ) {
 			return;
 		}
-		// Only load on our plugin pages (settings, generate, display)
+		// Only load on our plugin pages (settings, generate, display, shortcodes, changelog)
 		$target_pages = array(
 			'decision_card_page_aidc_settings',
 			'decision_card_page_aidc_generate',
 			'decision_card_page_aidc_display',
+			'decision_card_page_aidc_shortcodes',
+			'decision_card_page_aidc_changelog',
 			'toplevel_page_decision-cards-display'
 		);
 		if ( in_array( $screen->id, $target_pages, true ) ) {
@@ -863,24 +885,37 @@ class AIDC_Plugin {
 		</div>
 		<!-- Moved inline JS into assets/js/admin.js -->
 
-		<!-- Shortcode Usage Guide -->
-		<div style="margin-top: 40px;">
-			<h2><?php esc_html_e( 'Shortcode Usage Guide', 'ai-decision-cards' ); ?></h2>
+
+		<?php
+	}
+
+	/**
+	 * Render Shortcode Usage Guide page.
+	 *
+	 * @since 1.2.2
+	 */
+	public function render_shortcodes_page() {
+		if ( ! current_user_can( 'read' ) ) {
+			return;
+		}
+		?>
+		<div class="wrap" id="shortcode-guide">
+			<h1><?php esc_html_e( 'Shortcode Usage Guide', 'ai-decision-cards' ); ?></h1>
 			<p><?php esc_html_e( 'Use these shortcodes to display Decision Cards on your website pages and posts.', 'ai-decision-cards' ); ?></p>
-			
+
 			<div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-				<h3><?php esc_html_e( 'Display Decision Cards List', 'ai-decision-cards' ); ?></h3>
+				<h2><?php esc_html_e( 'Display Decision Cards List', 'ai-decision-cards' ); ?></h2>
 				<p><?php esc_html_e( 'Show a grid of Decision Cards with optional filtering:', 'ai-decision-cards' ); ?></p>
-				
+
 				<div style="background: white; padding: 15px; border-radius: 4px; font-family: monospace; margin: 10px 0;">
 					<div style="margin-bottom: 8px;"><code>[decision-cards-list]</code> <span style="color: #666;"><?php esc_html_e( '— Display all Decision Cards', 'ai-decision-cards' ); ?></span></div>
-					<div style="margin-bottom: 8px;"><code>[decision-cards-list limit="5"]</code> <span style="color: #666;"><?php esc_html_e( '— Show only 5 cards', 'ai-decision-cards' ); ?></span></div>
-					<div style="margin-bottom: 8px;"><code>[decision-cards-list status="Approved"]</code> <span style="color: #666;"><?php esc_html_e( '— Show only approved cards', 'ai-decision-cards' ); ?></span></div>
-					<div style="margin-bottom: 8px;"><code>[decision-cards-list owner="John"]</code> <span style="color: #666;"><?php esc_html_e( '— Filter by owner', 'ai-decision-cards' ); ?></span></div>
-					<div><code>[decision-cards-list show_filters="no"]</code> <span style="color: #666;"><?php esc_html_e( '— Hide search filters', 'ai-decision-cards' ); ?></span></div>
+					<div style="margin-bottom: 8px;"><code>[decision-cards-list limit=&quot;5&quot;]</code> <span style="color: #666;"><?php esc_html_e( '— Show only 5 cards', 'ai-decision-cards' ); ?></span></div>
+					<div style="margin-bottom: 8px;"><code>[decision-cards-list status=&quot;Approved&quot;]</code> <span style="color: #666;"><?php esc_html_e( '— Show only approved cards', 'ai-decision-cards' ); ?></span></div>
+					<div style="margin-bottom: 8px;"><code>[decision-cards-list owner=&quot;John&quot;]</code> <span style="color: #666;"><?php esc_html_e( '— Filter by owner', 'ai-decision-cards' ); ?></span></div>
+					<div><code>[decision-cards-list show_filters=&quot;no&quot;]</code> <span style="color: #666;"><?php esc_html_e( '— Hide search filters', 'ai-decision-cards' ); ?></span></div>
 				</div>
-				
-				<h4><?php esc_html_e( 'Available Parameters:', 'ai-decision-cards' ); ?></h4>
+
+				<h3><?php esc_html_e( 'Available Parameters:', 'ai-decision-cards' ); ?></h3>
 				<ul>
 					<li><strong>limit</strong>: <?php esc_html_e( 'Number of cards to display (1-50, default: 10)', 'ai-decision-cards' ); ?></li>
 					<li><strong>status</strong>: <?php esc_html_e( 'Filter by status (Proposed, Approved, Rejected)', 'ai-decision-cards' ); ?></li>
@@ -889,32 +924,89 @@ class AIDC_Plugin {
 					<li><strong>show_filters</strong>: <?php esc_html_e( 'Show/hide filter form (yes/no, default: yes)', 'ai-decision-cards' ); ?></li>
 				</ul>
 			</div>
-			
+
 			<div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-				<h3><?php esc_html_e( 'Display Single Decision Card', 'ai-decision-cards' ); ?></h3>
+				<h2><?php esc_html_e( 'Display Single Decision Card', 'ai-decision-cards' ); ?></h2>
 				<p><?php esc_html_e( 'Embed a specific Decision Card by its ID:', 'ai-decision-cards' ); ?></p>
-				
+
 				<div style="background: white; padding: 15px; border-radius: 4px; font-family: monospace; margin: 10px 0;">
-					<div style="margin-bottom: 8px;"><code>[decision-card id="123"]</code> <span style="color: #666;"><?php esc_html_e( '— Display full Decision Card', 'ai-decision-cards' ); ?></span></div>
-					<div style="margin-bottom: 8px;"><code>[decision-card id="123" excerpt_only="yes"]</code> <span style="color: #666;"><?php esc_html_e( '— Show only summary', 'ai-decision-cards' ); ?></span></div>
-					<div><code>[decision-card id="123" show_meta="no"]</code> <span style="color: #666;"><?php esc_html_e( '— Hide status banner', 'ai-decision-cards' ); ?></span></div>
+					<div style="margin-bottom: 8px;"><code>[decision-card id=&quot;123&quot;]</code> <span style="color: #666;"><?php esc_html_e( '— Display full Decision Card', 'ai-decision-cards' ); ?></span></div>
+					<div style="margin-bottom: 8px;"><code>[decision-card id=&quot;123&quot; excerpt_only=&quot;yes&quot;]</code> <span style="color: #666;"><?php esc_html_e( '— Show only summary', 'ai-decision-cards' ); ?></span></div>
+					<div><code>[decision-card id=&quot;123&quot; show_meta=&quot;no&quot;]</code> <span style="color: #666;"><?php esc_html_e( '— Hide status banner', 'ai-decision-cards' ); ?></span></div>
 				</div>
-				
-				<h4><?php esc_html_e( 'Available Parameters:', 'ai-decision-cards' ); ?></h4>
+
+				<h3><?php esc_html_e( 'Available Parameters:', 'ai-decision-cards' ); ?></h3>
 				<ul>
 					<li><strong>id</strong>: <?php esc_html_e( 'Decision Card ID (required - find this in the URL when editing)', 'ai-decision-cards' ); ?></li>
 					<li><strong>show_meta</strong>: <?php esc_html_e( 'Show status banner (yes/no, default: yes)', 'ai-decision-cards' ); ?></li>
 					<li><strong>excerpt_only</strong>: <?php esc_html_e( 'Show only summary instead of full content (yes/no, default: no)', 'ai-decision-cards' ); ?></li>
 				</ul>
 			</div>
-			
+
 			<div style="background: #fff2cc; padding: 15px; border-radius: 8px; border-left: 4px solid #ffcc00;">
-				<h4><?php esc_html_e( 'Quick Copy', 'ai-decision-cards' ); ?></h4>
+				<h3><?php esc_html_e( 'Quick Copy', 'ai-decision-cards' ); ?></h3>
 				<p><?php esc_html_e( 'You can copy these shortcodes and paste them directly into any page or post editor.', 'ai-decision-cards' ); ?></p>
 				<p><?php esc_html_e( 'To find a Decision Card ID, edit the card and look at the URL: ...&post=123 (where 123 is the ID)', 'ai-decision-cards' ); ?></p>
 			</div>
 		</div>
-		
+		<?php
+	}
+
+	/**
+	 * Render Changelog page under Decision Cards.
+	 *
+	 * @since 1.2.2
+	 */
+	public function render_changelog_page() {
+		if ( ! current_user_can( 'read' ) ) {
+			return;
+		}
+		?>
+		<div class="wrap" id="aidc-changelog">
+			<h1><?php esc_html_e( 'Changelog', 'ai-decision-cards' ); ?></h1>
+			<p><?php esc_html_e( 'Latest updates and release notes for AI Decision Cards.', 'ai-decision-cards' ); ?></p>
+
+			<h2>1.2.1</h2>
+			<ul>
+				<li><?php esc_html_e( 'Internationalization: Loaded text domain and prepared all strings for translation; initial .pot file added under languages/.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Admin assets: Properly enqueue public and admin CSS/JS only on plugin pages; expanded localized strings for UI messages.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Public display: Added a top-level "Decision Cards Display" menu with a quick link to a public page; auto-creation of a public page that uses [decision-cards-list] with its ID stored for reuse.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'UX improvements: Clearer filter UI on public display (including a Clear button) and preserved non-AIDC query parameters in shortcode filter forms.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Stability: Additional sanitization and guard checks in request handling.', 'ai-decision-cards' ); ?></li>
+			</ul>
+
+			<h2>1.2.0</h2>
+			<ul>
+				<li><?php esc_html_e( 'Enhanced Shortcode System: Comprehensive embedding options with [decision-cards-list] and [decision-card].', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Full-Text Search: Enhanced search across all Decision Card content sections.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'URL Parameter Integration: Shortcode filters respond to query parameters.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Owner Filtering: Extended filtering capabilities in both shortcodes and display pages.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Public Display Pages: Dedicated showcase pages for website visitors.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'User Guidance Integration: Built-in documentation and copy-paste shortcuts.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Responsive Design: Mobile-friendly display for all components.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Edit Screen Enhancements: Shortcode meta box with one-click selection.', 'ai-decision-cards' ); ?></li>
+			</ul>
+
+			<h2>1.1.0</h2>
+			<ul>
+				<li><?php esc_html_e( 'Fixed 5-Section Structure: Standardized Decision Card format.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Meta Banner: Visual status display (Status | Owner | Target).', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Smart Date Processing: Automatic relative date handling with follow-up tasks.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Preview Functionality: Full preview capability for generated cards.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Enhanced AI Prompts: Improved output quality with 600 token limit.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Direct HTML Output: Perfect rendering without Markdown conversion.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Public Post Type: Enabled public visibility for Decision Cards.', 'ai-decision-cards' ); ?></li>
+			</ul>
+
+			<h2>1.0.0</h2>
+			<ul>
+				<li><?php esc_html_e( 'Initial release with custom post type for Decision Cards.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'AI-powered conversation summarization.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Admin interface for generation and settings.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Meta fields for status, owner, and due date.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Basic OpenAI API integration.', 'ai-decision-cards' ); ?></li>
+			</ul>
+		</div>
 		<?php
 	}
 
@@ -1364,7 +1456,7 @@ Rules:
 						</div>
 						
 						<p>
-							<a href="<?php echo esc_url( admin_url( 'admin.php?page=aidc_settings#shortcode-guide' ) ); ?>" target="_blank" class="aidc-guide-link">
+							<a href="<?php echo esc_url( admin_url( 'admin.php?page=aidc_shortcodes#shortcode-guide' ) ); ?>" target="_blank" class="aidc-guide-link">
 								<?php esc_html_e( 'View Complete Shortcode Guide →', 'ai-decision-cards' ); ?>
 							</a>
 						</p>
