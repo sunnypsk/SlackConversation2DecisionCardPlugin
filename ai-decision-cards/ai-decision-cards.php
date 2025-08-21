@@ -3,7 +3,7 @@
  * Plugin Name: AI Decision Cards
  * Plugin URI: https://github.com/sunnypoon/SlackConversation2DecisionCardPlugin
  * Description: Convert Slack-style conversations into AI-generated Decision Cards with summaries and action items using OpenAI-compatible APIs.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Sunny Poon
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants.
-define( 'AIDC_VERSION', '1.2.0' );
+define( 'AIDC_VERSION', '1.2.1' );
 define( 'AIDC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AIDC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'AIDC_PLUGIN_FILE', __FILE__ );
@@ -41,6 +41,7 @@ class AIDC_Plugin {
 	const OPTION_API_KEY  = 'aidc_openai_api_key';
 	const OPTION_API_BASE = 'aidc_openai_api_base';
 	const OPTION_MODEL    = 'aidc_openai_model';
+	const OPTION_PUBLIC_PAGE_ID = 'aidc_public_page_id';
 
 	/**
 	 * Single instance of the plugin.
@@ -86,12 +87,12 @@ class AIDC_Plugin {
 		add_action( 'init', array( $this, 'register_cpt' ) );
 		add_action( 'init', array( $this, 'register_shortcodes' ) );
 		add_action( 'admin_menu', array( $this, 'register_admin_pages' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public_assets' ) );
 		add_action( 'admin_post_aidc_generate', array( $this, 'handle_generate' ) );
 		add_action( 'wp_ajax_aidc_test_api', array( $this, 'handle_api_test' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_shortcode_meta_box' ) );
 		add_filter( 'the_content', array( $this, 'prepend_meta_banner' ), 5 );
-		register_activation_hook( AIDC_PLUGIN_FILE, array( $this, 'on_activate' ) );
-		register_deactivation_hook( AIDC_PLUGIN_FILE, array( $this, 'on_deactivate' ) );
 	}
 
 	/**
@@ -363,106 +364,7 @@ class AIDC_Plugin {
 				<p><?php esc_html_e( 'No Decision Cards found.', 'ai-decision-cards' ); ?></p>
 			<?php endif; ?>
 
-			<style>
-				.aidc-shortcode-wrapper {
-					margin: 20px 0;
-				}
-				.aidc-shortcode-filters {
-					background: #f9f9f9;
-					padding: 15px;
-					border-radius: 5px;
-					margin-bottom: 20px;
-				}
-				.aidc-shortcode-filter-form {
-					display: flex;
-					gap: 10px;
-					flex-wrap: wrap;
-					align-items: center;
-				}
-				.aidc-shortcode-filter-form input,
-				.aidc-shortcode-filter-form select,
-				.aidc-shortcode-filter-form button {
-					padding: 8px 12px;
-					border: 1px solid #ddd;
-					border-radius: 4px;
-				}
-				.aidc-shortcode-filter-form button {
-					background: #0073aa;
-					color: white;
-					cursor: pointer;
-				}
-				.aidc-shortcode-grid {
-					display: grid;
-					grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-					gap: 20px;
-				}
-				.aidc-shortcode-card {
-					background: white;
-					padding: 15px;
-					border: 1px solid #ddd;
-					border-radius: 5px;
-					box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-				}
-				.aidc-shortcode-card h3 {
-					margin: 0 0 10px 0;
-				}
-				.aidc-shortcode-card h3 a {
-					color: #333;
-					text-decoration: none;
-				}
-				.aidc-shortcode-card h3 a:hover {
-					color: #0073aa;
-				}
-				.aidc-shortcode-meta {
-					margin-bottom: 10px;
-					display: flex;
-					flex-wrap: wrap;
-					gap: 8px;
-					align-items: center;
-				}
-				.aidc-shortcode-status {
-					padding: 3px 6px;
-					border-radius: 3px;
-					font-size: 11px;
-					font-weight: bold;
-					text-transform: uppercase;
-				}
-				.aidc-status-proposed {
-					background: #fff3cd;
-					color: #856404;
-				}
-				.aidc-status-approved {
-					background: #d4edda;
-					color: #155724;
-				}
-				.aidc-status-rejected {
-					background: #f8d7da;
-					color: #721c24;
-				}
-				.aidc-shortcode-owner,
-				.aidc-shortcode-due {
-					font-size: 11px;
-					color: #666;
-				}
-				.aidc-shortcode-excerpt {
-					color: #555;
-					margin-bottom: 10px;
-				}
-				.aidc-shortcode-date {
-					font-size: 11px;
-					color: #999;
-					text-align: right;
-				}
-				@media (max-width: 600px) {
-					.aidc-shortcode-grid {
-						grid-template-columns: 1fr;
-					}
-					.aidc-shortcode-filter-form {
-						flex-direction: column;
-						align-items: stretch;
-					}
-				}
-			</style>
+			<!-- Styles moved to assets/css/public.css -->
 		</div>
 		<?php
 		wp_reset_postdata();
@@ -558,118 +460,7 @@ class AIDC_Plugin {
 				</div>
 			</div>
 
-			<style>
-				.aidc-single-card-wrapper {
-					border: 1px solid #ddd;
-					border-radius: 8px;
-					padding: 20px;
-					margin: 20px 0;
-					background: white;
-					box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-				}
-				
-				.aidc-single-meta-banner {
-					background-color: #f9f9f9;
-					border: 1px solid #ddd;
-					padding: 12px 16px;
-					margin-bottom: 20px;
-					font-size: 14px;
-					line-height: 1.4;
-					color: #333;
-					border-radius: 4px;
-				}
-				
-				.aidc-single-card-title {
-					margin: 0 0 15px 0;
-					font-size: 1.3em;
-					line-height: 1.3;
-				}
-				
-				.aidc-single-card-title a {
-					color: #2c3e50;
-					text-decoration: none;
-				}
-				
-				.aidc-single-card-title a:hover {
-					color: #0073aa;
-				}
-				
-				.aidc-single-card-content {
-					line-height: 1.6;
-				}
-				
-				.aidc-single-card-excerpt {
-					color: #555;
-					margin-bottom: 15px;
-				}
-				
-				.aidc-single-card-excerpt ul {
-					margin: 0;
-					padding-left: 20px;
-				}
-				
-				.aidc-single-card-full h2 {
-					color: #2c3e50;
-					border-bottom: 2px solid #f0f0f0;
-					padding-bottom: 5px;
-					margin-top: 25px;
-					margin-bottom: 15px;
-				}
-				
-				.aidc-single-card-full h2:first-child {
-					margin-top: 0;
-				}
-				
-				.aidc-single-card-full ul {
-					margin: 10px 0;
-					padding-left: 25px;
-				}
-				
-				.aidc-single-card-full blockquote {
-					background: #f9f9f9;
-					border-left: 4px solid #0073aa;
-					margin: 15px 0;
-					padding: 10px 15px;
-					font-style: italic;
-					color: #666;
-				}
-				
-				.aidc-single-card-footer {
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					margin-top: 20px;
-					padding-top: 15px;
-					border-top: 1px solid #f0f0f0;
-					font-size: 14px;
-				}
-				
-				.aidc-single-card-date {
-					color: #999;
-				}
-				
-				.aidc-single-card-link {
-					color: #0073aa;
-					text-decoration: none;
-					font-weight: 500;
-				}
-				
-				.aidc-single-card-link:hover {
-					text-decoration: underline;
-				}
-				
-				@media (max-width: 600px) {
-					.aidc-single-card-wrapper {
-						padding: 15px;
-					}
-					
-					.aidc-single-card-footer {
-						flex-direction: column;
-						align-items: flex-start;
-						gap: 10px;
-					}
-				}
-			</style>
+			<!-- Styles moved to assets/css/public.css -->
 		</div>
 		<?php
 		return ob_get_clean();
@@ -758,7 +549,7 @@ class AIDC_Plugin {
 			</div>
 		</div>
 		
-		<style>
+		<!-- Styles moved to assets/css/admin.css -->
 			.aidc-shortcode-meta-box input[readonly] {
 				cursor: pointer;
 			}
@@ -855,6 +646,101 @@ class AIDC_Plugin {
 			array( $this, 'render_public_display_page' ),
 			'dashicons-yes-alt',
 			30
+		);
+	}
+
+	/**
+	 * Enqueue admin assets for plugin pages.
+	 *
+	 * @since 1.2.1
+	 * @param string $hook Current admin page hook.
+	 */
+	public function enqueue_admin_assets( $hook ) {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+		// Only load on our plugin pages (settings, generate, display)
+		$target_pages = array(
+			'decision_card_page_aidc_settings',
+			'decision_card_page_aidc_generate',
+			'decision_card_page_aidc_display',
+			'toplevel_page_decision-cards-display'
+		);
+		if ( in_array( $screen->id, $target_pages, true ) ) {
+			// Public styles are also needed for previewing display inside admin
+			wp_enqueue_style(
+				'aidc-public',
+				plugins_url( 'assets/css/public.css', __FILE__ ),
+				array(),
+				AIDC_VERSION
+			);
+			wp_enqueue_style(
+				'aidc-admin',
+				plugins_url( 'assets/css/admin.css', __FILE__ ),
+				array(),
+				AIDC_VERSION
+			);
+			wp_enqueue_script(
+				'aidc-admin',
+				plugins_url( 'assets/js/admin.js', __FILE__ ),
+				array( 'jquery' ),
+				AIDC_VERSION,
+				true
+			);
+
+			// Public JS is needed for the display toggle inside admin preview pages
+			if ( in_array( $screen->id, array( 'decision_card_page_aidc_display', 'toplevel_page_decision-cards-display' ), true ) ) {
+				wp_enqueue_script(
+					'aidc-public',
+					plugins_url( 'assets/js/public.js', __FILE__ ),
+					array(),
+					AIDC_VERSION,
+					true
+				);
+			}
+			wp_localize_script(
+				'aidc-admin',
+				'aidcAdmin',
+				array(
+					'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+					'nonce' => wp_create_nonce( 'aidc_test_api' ),
+					'i18n' => array(
+						'pleaseEnterKey' => __( 'Please enter an API key first.', 'ai-decision-cards' ),
+						'testing' => __( 'Testing...', 'ai-decision-cards' ),
+						'testingConnection' => __( 'Testing API connection...', 'ai-decision-cards' ),
+						'testApiKey' => __( 'Test API Key', 'ai-decision-cards' ),
+						'genPleaseEnterConversation' => __( 'Please enter a conversation before generating.', 'ai-decision-cards' ),
+						'genGenerating' => __( 'Generating... Please wait', 'ai-decision-cards' ),
+						'genAnalyzing' => __( 'AI is analyzing your conversation and creating a decision card... This may take 10-30 seconds.', 'ai-decision-cards' ),
+						'genLongerThanExpected' => __( 'Taking longer than expected. Please check your API settings or try again.', 'ai-decision-cards' ),
+						'genGenerateButton' => __( 'Generate Summary & Create Draft', 'ai-decision-cards' ),
+					),
+				)
+			);
+		}
+	}
+
+	/**
+	 * Enqueue public assets.
+	 *
+	 * @since 1.2.1
+	 */
+	public function enqueue_public_assets() {
+		// Always load public CSS since shortcodes may appear on any page
+		wp_enqueue_style(
+			'aidc-public',
+			plugins_url( 'assets/css/public.css', __FILE__ ),
+			array(),
+			AIDC_VERSION
+		);
+
+		wp_enqueue_script(
+			'aidc-public',
+			plugins_url( 'assets/js/public.js', __FILE__ ),
+			array(),
+			AIDC_VERSION,
+			true
 		);
 	}
 
@@ -975,82 +861,7 @@ class AIDC_Plugin {
 			</form>
 			<div id="aidc_test_result" style="margin-top: 15px;"></div>
 		</div>
-		<script type="text/javascript">
-		function toggleApiFields() {
-			const apiType = document.getElementById('aidc_api_type').value;
-			const apiKeyLabel = document.getElementById('api_key_label');
-			const apiKeyDesc = document.getElementById('api_key_desc');
-			const apiBaseLabel = document.getElementById('api_base_label');
-			const apiBaseDesc = document.getElementById('api_base_desc');
-			const modelLabel = document.getElementById('model_label');
-			const modelDesc = document.getElementById('model_desc');
-			
-			apiKeyLabel.textContent = '<?php esc_attr_e( "API Key", "ai-decision-cards" ); ?>';
-			apiKeyDesc.textContent = '<?php esc_attr_e( "Your API key for OpenAI, OpenRouter, or other compatible services.", "ai-decision-cards" ); ?>';
-			apiBaseLabel.textContent = '<?php esc_attr_e( "API Base URL", "ai-decision-cards" ); ?>';
-			apiBaseDesc.textContent = '<?php esc_attr_e( "Example: https://api.openai.com/ or https://openrouter.ai/api/v1/", "ai-decision-cards" ); ?>';
-			modelLabel.textContent = '<?php esc_attr_e( "Model", "ai-decision-cards" ); ?>';
-			modelDesc.textContent = '<?php esc_attr_e( "Example: gpt-3.5-turbo, gpt-4, claude-3-haiku, etc.", "ai-decision-cards" ); ?>';
-		}
-		
-		// Initialize on page load
-		document.addEventListener('DOMContentLoaded', function() {
-			toggleApiFields();
-		});
-		
-		// Handle API test button click
-		document.getElementById('aidc_test_api').addEventListener('click', function() {
-			const button = this;
-			const resultDiv = document.getElementById('aidc_test_result');
-			
-			// Get current form values
-			const apiType = document.getElementById('aidc_api_type').value;
-			const apiKey = document.getElementById('aidc_api_key').value;
-			const apiBase = document.getElementById('aidc_api_base').value;
-			const model = document.getElementById('aidc_model').value;
-			
-			// Basic validation
-			if (!apiKey.trim()) {
-				resultDiv.innerHTML = '<div class="notice notice-error"><p><?php esc_html_e( "Please enter an API key first.", "ai-decision-cards" ); ?></p></div>';
-				return;
-			}
-			
-			// Show loading state
-			button.disabled = true;
-			button.textContent = '<?php esc_attr_e( "Testing...", "ai-decision-cards" ); ?>';
-			resultDiv.innerHTML = '<div class="notice notice-info"><p><?php esc_html_e( "Testing API connection...", "ai-decision-cards" ); ?></p></div>';
-			
-			// Prepare AJAX request
-			const formData = new FormData();
-			formData.append('action', 'aidc_test_api');
-			formData.append('aidc_test_nonce', '<?php echo esc_js( wp_create_nonce( "aidc_test_api" ) ); ?>');
-			formData.append('api_type', apiType);
-			formData.append('api_key', apiKey);
-			formData.append('api_base', apiBase);
-			formData.append('model', model);
-			
-			// Send AJAX request
-			fetch('<?php echo esc_url( admin_url( "admin-ajax.php" ) ); ?>', {
-				method: 'POST',
-				body: formData
-			})
-			.then(response => response.json())
-			.then(data => {
-				if (data.success) {
-					resultDiv.innerHTML = '<div class="notice notice-success"><p>' + data.data + '</p></div>';
-				} else {
-					resultDiv.innerHTML = '<div class="notice notice-error"><p>' + data.data + '</p></div>';
-				}
-			})
-			.catch(error => {
-				resultDiv.innerHTML = '<div class="notice notice-error"><p><?php esc_html_e( "Network error occurred while testing API.", "ai-decision-cards" ); ?></p></div>';
-			})
-			.finally(() => {
-				button.disabled = false;
-				button.textContent = '<?php esc_attr_e( "Test API Key", "ai-decision-cards" ); ?>';
-			});
-		});
-		</script>
+		<!-- Moved inline JS into assets/js/admin.js -->
 
 		<!-- Shortcode Usage Guide -->
 		<div style="margin-top: 40px;">
@@ -1170,43 +981,7 @@ class AIDC_Plugin {
                 <div id="aidc_generate_status" style="margin-top: 15px; display: none;"></div>
             </form>
         </div>
-        <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form[action*="admin-post.php"]');
-            const button = document.getElementById('aidc_generate_btn');
-            const statusDiv = document.getElementById('aidc_generate_status');
-            
-            if (form && button && statusDiv) {
-                form.addEventListener('submit', function(e) {
-                    // Basic validation
-                    const conversation = document.getElementById('aidc_conversation').value.trim();
-                    if (!conversation) {
-                        statusDiv.style.display = 'block';
-                        statusDiv.innerHTML = '<div class="notice notice-error"><p><?php esc_html_e( "Please enter a conversation before generating.", "ai-decision-cards" ); ?></p></div>';
-                        e.preventDefault();
-                        return false;
-                    }
-                    
-                    // Show loading state
-                    button.disabled = true;
-                    button.value = '<?php esc_attr_e( "Generating... Please wait", "ai-decision-cards" ); ?>';
-                    statusDiv.style.display = 'block';
-                    statusDiv.innerHTML = '<div class="notice notice-info"><p><?php esc_html_e( "🤖 AI is analyzing your conversation and creating a decision card... This may take 10-30 seconds.", "ai-decision-cards" ); ?></p></div>';
-                    
-                    // Set a timeout to re-enable the button in case something goes wrong
-                    setTimeout(function() {
-                        if (button.disabled) {
-                            button.disabled = false;
-                            button.value = '<?php esc_attr_e( "Generate Summary & Create Draft", "ai-decision-cards" ); ?>';
-                            statusDiv.innerHTML = '<div class="notice notice-warning"><p><?php esc_html_e( "Taking longer than expected. Please check your API settings or try again.", "ai-decision-cards" ); ?></p></div>';
-                        }
-                    }, 45000); // 45 seconds timeout
-                    
-                    return true;
-                });
-            }
-        });
-        </script>
+        <!-- Moved inline JS into assets/js/admin.js -->
         <?php
     }
 
@@ -1334,7 +1109,7 @@ Rules:
 
         $edit_url = get_edit_post_link($post_id, '');
         if ($edit_url) {
-            wp_redirect($edit_url);
+            wp_safe_redirect($edit_url);
             exit;
         }
         $this->redirect_with_notice('Draft created (ID ' . intval($post_id) . ').', 'success');
@@ -1537,7 +1312,7 @@ Rules:
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Decision Cards Display', 'ai-decision-cards' ); ?></h1>
 			<p><?php esc_html_e( 'Preview how Decision Cards appear to website visitors.', 'ai-decision-cards' ); ?></p>
-			<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=decision-cards-display' ) ); ?>" target="_blank" class="button button-secondary"><?php esc_html_e( 'View Public Display Page', 'ai-decision-cards' ); ?></a></p>
+			<p><a href="<?php echo esc_url( $this->get_or_create_public_page_url() ); ?>" target="_blank" class="button button-secondary"><?php esc_html_e( 'View Public Display Page', 'ai-decision-cards' ); ?></a></p>
 			<?php $this->render_cards_list(); ?>
 		</div>
 		<?php
@@ -1550,15 +1325,7 @@ Rules:
 	 */
 	public function render_public_display_page() {
 		?>
-		<!DOCTYPE html>
-		<html <?php language_attributes(); ?>>
-		<head>
-			<meta charset="<?php bloginfo( 'charset' ); ?>">
-			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<title><?php esc_html_e( 'Decision Cards Display', 'ai-decision-cards' ); ?> - <?php bloginfo( 'name' ); ?></title>
-			<?php $this->render_display_styles(); ?>
-		</head>
-		<body class="aidc-public-display">
+		<div class="aidc-public-display">
 			<div class="aidc-container">
 				<header class="aidc-header">
 					<h1><?php esc_html_e( 'Decision Cards', 'ai-decision-cards' ); ?></h1>
@@ -1567,7 +1334,7 @@ Rules:
 				
 				<div class="aidc-embed-info">
 					<div class="aidc-embed-toggle">
-						<button type="button" onclick="toggleEmbedInfo()" class="aidc-embed-button">
+						<button type="button" class="aidc-embed-button" aria-expanded="false">
 							<span class="dashicons dashicons-admin-page"></span>
 							<?php esc_html_e( 'How to Embed These Cards', 'ai-decision-cards' ); ?>
 						</button>
@@ -1607,8 +1374,7 @@ Rules:
 				<?php $this->render_search_filters(); ?>
 				<?php $this->render_cards_list(); ?>
 			</div>
-		</body>
-		</html>
+		</div>
 		<?php
 	}
 
@@ -1794,367 +1560,7 @@ Rules:
 	 * @since 1.0.0
 	 */
 	private function render_display_styles() {
-		?>
-		<style>
-			.aidc-public-display {
-				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-				line-height: 1.6;
-				color: #333;
-				background-color: #f9f9f9;
-				margin: 0;
-				padding: 0;
-			}
-			
-			.aidc-container {
-				max-width: 1200px;
-				margin: 0 auto;
-				padding: 20px;
-			}
-			
-			.aidc-header {
-				text-align: center;
-				margin-bottom: 30px;
-				padding: 20px;
-				background: white;
-				border-radius: 8px;
-				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-			}
-			
-			.aidc-header h1 {
-				margin: 0 0 10px 0;
-				color: #2c3e50;
-				font-size: 2.5em;
-			}
-			
-			.aidc-filters {
-				background: white;
-				padding: 20px;
-				border-radius: 8px;
-				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-				margin-bottom: 20px;
-			}
-			
-			.aidc-filter-form {
-				display: flex;
-				gap: 15px;
-				flex-wrap: wrap;
-				align-items: center;
-			}
-			
-			.aidc-filter-group {
-				display: flex;
-				align-items: center;
-			}
-			
-			.aidc-search-input,
-			.aidc-owner-input,
-			.aidc-filter-select {
-				padding: 8px 12px;
-				border: 1px solid #ddd;
-				border-radius: 4px;
-				font-size: 14px;
-			}
-			
-			.aidc-search-input {
-				width: 250px;
-			}
-			
-			.aidc-owner-input {
-				width: 150px;
-			}
-			
-			.aidc-filter-button {
-				background: #0073aa;
-				color: white;
-				padding: 8px 16px;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-				font-size: 14px;
-			}
-			
-			.aidc-filter-button:hover {
-				background: #005a87;
-			}
-			
-			.aidc-clear-button {
-				color: #666;
-				text-decoration: none;
-				margin-left: 10px;
-				padding: 8px 16px;
-			}
-			
-			.aidc-clear-button:hover {
-				color: #000;
-			}
-			
-			.aidc-cards-grid {
-				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-				gap: 20px;
-				margin-bottom: 30px;
-			}
-			
-			.aidc-card {
-				background: white;
-				padding: 20px;
-				border-radius: 8px;
-				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-				transition: box-shadow 0.2s ease;
-			}
-			
-			.aidc-card:hover {
-				box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-			}
-			
-			.aidc-card-title {
-				margin: 0 0 15px 0;
-				font-size: 1.2em;
-			}
-			
-			.aidc-card-title a {
-				color: #2c3e50;
-				text-decoration: none;
-			}
-			
-			.aidc-card-title a:hover {
-				color: #0073aa;
-			}
-			
-			.aidc-card-meta {
-				margin-bottom: 15px;
-				display: flex;
-				flex-wrap: wrap;
-				gap: 10px;
-				align-items: center;
-			}
-			
-			.aidc-status {
-				padding: 4px 8px;
-				border-radius: 4px;
-				font-size: 12px;
-				font-weight: bold;
-				text-transform: uppercase;
-			}
-			
-			.aidc-status-proposed {
-				background: #fff3cd;
-				color: #856404;
-			}
-			
-			.aidc-status-approved {
-				background: #d4edda;
-				color: #155724;
-			}
-			
-			.aidc-status-rejected {
-				background: #f8d7da;
-				color: #721c24;
-			}
-			
-			.aidc-owner,
-			.aidc-due {
-				font-size: 12px;
-				color: #666;
-			}
-			
-			.aidc-card-excerpt {
-				color: #555;
-				margin-bottom: 15px;
-				line-height: 1.5;
-			}
-			
-			.aidc-card-excerpt ul {
-				margin: 0;
-				padding-left: 20px;
-			}
-			
-			.aidc-card-date {
-				font-size: 12px;
-				color: #999;
-				text-align: right;
-			}
-			
-			.aidc-pagination {
-				display: flex;
-				justify-content: center;
-				gap: 10px;
-				padding: 20px 0;
-			}
-			
-			.aidc-pagination a,
-			.aidc-pagination .current {
-				padding: 8px 12px;
-				border: 1px solid #ddd;
-				text-decoration: none;
-				color: #0073aa;
-				border-radius: 4px;
-			}
-			
-			.aidc-pagination .current {
-				background: #0073aa;
-				color: white;
-				border-color: #0073aa;
-			}
-			
-			.aidc-pagination a:hover {
-				background: #f0f0f0;
-			}
-			
-			.aidc-no-cards {
-				text-align: center;
-				padding: 40px;
-				background: white;
-				border-radius: 8px;
-				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-			}
-			
-			.aidc-no-cards a {
-				color: #0073aa;
-				text-decoration: none;
-			}
-			
-			.aidc-no-cards a:hover {
-				text-decoration: underline;
-			}
-			
-			.aidc-embed-info {
-				background: #fff;
-				border-radius: 8px;
-				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-				margin-bottom: 20px;
-				overflow: hidden;
-			}
-			
-			.aidc-embed-toggle {
-				background: #f0f8ff;
-				border-bottom: 1px solid #e0e0e0;
-			}
-			
-			.aidc-embed-button {
-				width: 100%;
-				padding: 15px 20px;
-				background: none;
-				border: none;
-				text-align: left;
-				cursor: pointer;
-				font-size: 14px;
-				font-weight: 500;
-				color: #2c3e50;
-				display: flex;
-				align-items: center;
-				gap: 8px;
-				transition: background-color 0.2s ease;
-			}
-			
-			.aidc-embed-button:hover {
-				background: rgba(0,123,255,0.1);
-			}
-			
-			.aidc-embed-button .dashicons {
-				font-size: 16px;
-				width: 16px;
-				height: 16px;
-			}
-			
-			.aidc-embed-content {
-				padding: 20px;
-			}
-			
-			.aidc-embed-content h3 {
-				margin: 0 0 15px 0;
-				color: #2c3e50;
-			}
-			
-			.aidc-embed-examples {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-				gap: 15px;
-				margin: 20px 0;
-			}
-			
-			.aidc-embed-example {
-				background: #f9f9f9;
-				padding: 15px;
-				border-radius: 6px;
-				border-left: 4px solid #0073aa;
-			}
-			
-			.aidc-embed-example h4 {
-				margin: 0 0 8px 0;
-				font-size: 14px;
-				color: #2c3e50;
-			}
-			
-			.aidc-embed-example code {
-				display: block;
-				background: #333;
-				color: #fff;
-				padding: 8px 12px;
-				border-radius: 4px;
-				font-family: 'Courier New', monospace;
-				font-size: 13px;
-				margin: 8px 0;
-				word-break: break-all;
-			}
-			
-			.aidc-embed-example p {
-				margin: 8px 0 0 0;
-				font-size: 12px;
-				color: #666;
-			}
-			
-			.aidc-guide-link {
-				color: #0073aa;
-				text-decoration: none;
-				font-weight: 500;
-			}
-			
-			.aidc-guide-link:hover {
-				text-decoration: underline;
-			}
-			
-			@media (max-width: 768px) {
-				.aidc-cards-grid {
-					grid-template-columns: 1fr;
-				}
-				
-				.aidc-filter-form {
-					flex-direction: column;
-					align-items: stretch;
-				}
-				
-				.aidc-filter-group {
-					justify-content: center;
-				}
-				
-				.aidc-search-input,
-				.aidc-owner-input {
-					width: 100%;
-					max-width: 300px;
-				}
-				
-				.aidc-embed-examples {
-					grid-template-columns: 1fr;
-				}
-			}
-		</style>
-		
-		<script>
-			function toggleEmbedInfo() {
-				const content = document.getElementById('aidc-embed-content');
-				const button = document.querySelector('.aidc-embed-button');
-				
-				if (content.style.display === 'none') {
-					content.style.display = 'block';
-					button.setAttribute('aria-expanded', 'true');
-				} else {
-					content.style.display = 'none';
-					button.setAttribute('aria-expanded', 'false');
-				}
-			}
-		</script>
-		<?php
+		// Styles moved to assets/css/public.css and enqueued via wp_enqueue_scripts
 	}
 
 	/**
@@ -2173,7 +1579,7 @@ Rules:
 			),
 			admin_url( 'edit.php?post_type=decision_card' )
 		);
-		wp_redirect( $url );
+		wp_safe_redirect( $url );
 		exit;
 	}
 
@@ -2207,6 +1613,37 @@ Rules:
 
 		return $where . ' ' . $custom_where;
 	}
+
+	/**
+	 * Ensure a public page exists for Decision Cards Display and return its permalink.
+	 * Creates the page on first use and stores its ID in an option.
+	 *
+	 * @since 1.2.1
+	 * @return string Permalink URL of the public display page.
+	 */
+	private function get_or_create_public_page_url() {
+		$page_id = intval( get_option( self::OPTION_PUBLIC_PAGE_ID ) );
+		if ( $page_id && get_post_status( $page_id ) ) {
+			return get_permalink( $page_id );
+		}
+
+		// Create a new page to host the public display
+		$page_id = wp_insert_post( array(
+			'post_title'   => __( 'Decision Cards', 'ai-decision-cards' ),
+			'post_name'    => 'decision-cards',
+			'post_status'  => 'publish',
+			'post_type'    => 'page',
+			'post_content' => '[decision-cards-list]'
+		) );
+
+		if ( ! is_wp_error( $page_id ) && $page_id ) {
+			update_option( self::OPTION_PUBLIC_PAGE_ID, $page_id );
+			return get_permalink( $page_id );
+		}
+
+		// Fallback to home if creation failed
+		return home_url( '/' );
+	}
 }
 
 /**
@@ -2218,6 +1655,31 @@ function aidc_init() {
 	AIDC_Plugin::get_instance();
 }
 add_action( 'plugins_loaded', 'aidc_init' );
+
+// Register activation/deactivation hooks using wrapper functions.
+register_activation_hook( __FILE__, 'aidc_on_activate' );
+function aidc_on_activate() {
+	if ( class_exists( 'AIDC_Plugin' ) ) {
+		AIDC_Plugin::get_instance()->on_activate();
+	}
+}
+
+register_deactivation_hook( __FILE__, 'aidc_on_deactivate' );
+function aidc_on_deactivate() {
+	if ( class_exists( 'AIDC_Plugin' ) ) {
+		AIDC_Plugin::get_instance()->on_deactivate();
+	}
+}
+
+/**
+ * Load plugin textdomain for translations.
+ *
+ * @since 1.2.1
+ */
+function aidc_load_textdomain() {
+	load_plugin_textdomain( 'ai-decision-cards', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+}
+add_action( 'plugins_loaded', 'aidc_load_textdomain' );
 
 /**
  * Display admin notices for the plugin.
