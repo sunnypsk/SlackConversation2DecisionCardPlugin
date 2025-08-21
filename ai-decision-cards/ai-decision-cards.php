@@ -964,47 +964,37 @@ class AIDC_Plugin {
 		?>
 		<div class="wrap" id="aidc-changelog">
 			<h1><?php esc_html_e( 'Changelog', 'ai-decision-cards' ); ?></h1>
-			<p><?php esc_html_e( 'Latest updates and release notes for AI Decision Cards.', 'ai-decision-cards' ); ?></p>
+			<p><?php esc_html_e( 'What’s new and improved in AI Decision Cards.', 'ai-decision-cards' ); ?></p>
 
 			<h2>1.2.1</h2>
 			<ul>
-				<li><?php esc_html_e( 'Internationalization: Loaded text domain and prepared all strings for translation; initial .pot file added under languages/.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Admin assets: Properly enqueue public and admin CSS/JS only on plugin pages; expanded localized strings for UI messages.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Public display: Added a top-level "Decision Cards Display" menu with a quick link to a public page; auto-creation of a public page that uses [decision-cards-list] with its ID stored for reuse.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'UX improvements: Clearer filter UI on public display (including a Clear button) and preserved non-AIDC query parameters in shortcode filter forms.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Stability: Additional sanitization and guard checks in request handling.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'New: Translation-ready with a template so you can add your language.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'New: One-click public Decision Cards page from the admin menu.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Improved: Simpler filters with a quick Reset for faster browsing.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Improved: Clearer messages and guidance during generation.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Stability: General reliability and security improvements.', 'ai-decision-cards' ); ?></li>
 			</ul>
 
 			<h2>1.2.0</h2>
 			<ul>
-				<li><?php esc_html_e( 'Enhanced Shortcode System: Comprehensive embedding options with [decision-cards-list] and [decision-card].', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Full-Text Search: Enhanced search across all Decision Card content sections.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'URL Parameter Integration: Shortcode filters respond to query parameters.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Owner Filtering: Extended filtering capabilities in both shortcodes and display pages.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Public Display Pages: Dedicated showcase pages for website visitors.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'User Guidance Integration: Built-in documentation and copy-paste shortcuts.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Responsive Design: Mobile-friendly display for all components.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Edit Screen Enhancements: Shortcode meta box with one-click selection.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'New: Easy shortcodes to list and embed cards anywhere.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'New: Search across titles and full card content.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'New: Filter by status and owner to find decisions quickly.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'New: Public display option to share decisions with stakeholders.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Improved: Copy-and-paste shortcodes and responsive layouts.', 'ai-decision-cards' ); ?></li>
 			</ul>
 
 			<h2>1.1.0</h2>
 			<ul>
-				<li><?php esc_html_e( 'Fixed 5-Section Structure: Standardized Decision Card format.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Meta Banner: Visual status display (Status | Owner | Target).', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Smart Date Processing: Automatic relative date handling with follow-up tasks.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Preview Functionality: Full preview capability for generated cards.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Enhanced AI Prompts: Improved output quality with 600 token limit.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Direct HTML Output: Perfect rendering without Markdown conversion.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Public Post Type: Enabled public visibility for Decision Cards.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'New: Standard 5-section layout for consistent Decision Cards.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'New: Status banner showing Status | Owner | Target.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Improved: Smarter date handling and better previews.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'Improved: Higher-quality AI output and cleaner rendering.', 'ai-decision-cards' ); ?></li>
 			</ul>
 
 			<h2>1.0.0</h2>
 			<ul>
-				<li><?php esc_html_e( 'Initial release with custom post type for Decision Cards.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'AI-powered conversation summarization.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Admin interface for generation and settings.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Meta fields for status, owner, and due date.', 'ai-decision-cards' ); ?></li>
-				<li><?php esc_html_e( 'Basic OpenAI API integration.', 'ai-decision-cards' ); ?></li>
+				<li><?php esc_html_e( 'First release with AI‑generated Decision Cards and simple embedding.', 'ai-decision-cards' ); ?></li>
 			</ul>
 		</div>
 		<?php

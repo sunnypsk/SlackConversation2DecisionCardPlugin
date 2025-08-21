@@ -164,38 +164,34 @@ This plugin follows WordPress coding standards and best practices:
 ## Changelog
 
 ### 1.2.1
-- **Internationalization**: Loaded text domain and prepared all strings for translation; initial `.pot` file added under `languages/`.
-- **Admin assets**: Properly enqueue public and admin CSS/JS only on plugin pages; expanded localized strings for UI messages.
-- **Public display**: Added a top-level "Decision Cards Display" menu with a quick link to a public page; auto-creation of a public page that uses `[decision-cards-list]` with its ID stored for reuse.
-- **UX improvements**: Clearer filter UI on public display (including a Clear button) and preserved non-AIDC query parameters in shortcode filter forms.
-- **Stability**: Additional sanitization and guard checks in request handling.
+- **New**: Translation-ready. A template is included so you can add your language.
+- **New**: One-click public Decision Cards page from the admin menu.
+- **Improved**: Simpler filters with a quick Reset for faster browsing.
+- **Improved**: Clearer messages and built‑in guidance while generating cards.
+- **Stability**: General reliability and security improvements.
 
 ### 1.2.0
-- **Enhanced Shortcode System**: Comprehensive embedding options with `[decision-cards-list]` and `[decision-card]`
-- **Full-Text Search**: Enhanced search across all Decision Card content sections
-- **URL Parameter Integration**: Shortcode filters respond to query parameters
-- **Owner Filtering**: Extended filtering capabilities in both shortcodes and display pages
-- **Public Display Pages**: Dedicated showcase pages for website visitors
-- **User Guidance Integration**: Built-in documentation and copy-paste shortcuts
-- **Responsive Design**: Mobile-friendly display for all components
-- **Edit Screen Enhancements**: Shortcode meta box with one-click selection
+- **New**: Easy shortcodes to list and embed cards anywhere.
+- **New**: Search across titles and full card content.
+- **New**: Filter by status and owner to find decisions quickly.
+- **New**: Public display option to share decisions with stakeholders.
+- **Improved**: Copy‑and‑paste shortcodes and responsive layouts.
 
 ### 1.1.0
-- **Fixed 5-Section Structure**: Standardized Decision Card format
-- **Meta Banner**: Visual status display (Status | Owner | Target)
-- **Smart Date Processing**: Automatic relative date handling with follow-up tasks
-- **Preview Functionality**: Full preview capability for generated cards
-- **Enhanced AI Prompts**: Improved output quality with 600 token limit
-- **Direct HTML Output**: Perfect rendering without Markdown conversion
-- **Public Post Type**: Enabled public visibility for Decision Cards
+- **New**: Standard 5‑section Decision Card layout for consistency.
+- **New**: Status banner showing Status | Owner | Target.
+- **Improved**: Smarter date handling and better previews.
+- **Improved**: Higher‑quality AI output and cleaner rendering.
 
 ### 1.0.0
-- Initial release
-- Custom post type for Decision Cards
-- AI-powered conversation summarization
-- Admin interface for generation and settings
-- Meta fields for status, owner, and due date
-- Basic OpenAI API integration
+- First release with AI‑generated Decision Cards and simple embedding.
+
+## Translations
+
+- **How it works**: The plugin is translation‑ready. WordPress loads translations based on your Site Language (Settings → General).
+- **Where to put files**: Place compiled `.mo` files in `ai-decision-cards/languages/` using the name `ai-decision-cards-<locale>.mo` (e.g., `ai-decision-cards-zh_HK.mo`).
+- **Template**: A `.pot` file is included at `ai-decision-cards/languages/ai-decision-cards.pot` for creating new translations.
+- **Example**: An example `zh_HK` translation `.po` is included. Compile it to `.mo` with a tool like Poedit and upload it to the same folder.
 
 ## Support
 
