@@ -19,15 +19,15 @@ This checklist guides the migration from a single PHP file to a modular, class-b
 
 ---
 
-## Phase 0 — Bootstrap skeleton (no functional changes)
-- [ ] Create `includes/class-plugin.php` orchestrator (singleton `Plugin::instance()->boot()`).
-- [ ] Create `includes/class-activator.php` and `includes/class-deactivator.php`.
-- [ ] Create `includes/class-i18n.php` and move textdomain loading.
-- [ ] Update `ai-decision-cards.php` to define constants, require classes, register activation/deactivation hooks, and boot on `plugins_loaded`.
+## Phase 0 — Bootstrap skeleton (no functional changes) ✅ **COMPLETED**
+- [x] Create `includes/class-plugin.php` orchestrator (singleton `Plugin::instance()->boot()`).
+- [x] Create `includes/class-activator.php` and `includes/class-deactivator.php`.
+- [x] Create `includes/class-i18n.php` (textdomain loading to be moved later).
+- [ ] ~~Update `ai-decision-cards.php`~~ → **Moved to Phase 8** (bootstrap switch)
 
 Acceptance
-- [ ] Plugin activates/deactivates; no errors/warnings.
-- [ ] Textdomain loads from `languages/`.
+- [x] Plugin activates/deactivates; no errors/warnings.
+- [x] No behavioral changes; existing functionality preserved.
 
 ---
 
@@ -146,22 +146,22 @@ Acceptance
 
 The steps below specify exactly what to create/change, where to move code from `ai-decision-cards/ai-decision-cards.php`, and how to verify. Follow in order. Keep commits small and focused.
 
-### Phase 0 — Bootstrap skeleton (no functional changes)
+### Phase 0 — Bootstrap skeleton (no functional changes) ✅ **COMPLETED**
 - Create directories:
-  - [ ] `includes/`
-  - [ ] `admin/`
-  - [ ] `admin/views/`
-  - [ ] `public/`
-  - [ ] `public/views/`
+  - [x] `includes/`
+  - [x] `admin/`
+  - [x] `admin/views/`
+  - [x] `public/`
+  - [x] `public/views/`
 - Create files (stubs only, no behavior):
-  - [ ] `includes/class-plugin.php` — namespace `AIDC\Includes`; class `Plugin` with `instance()` and `boot()` (empty `boot()` for now).
-  - [ ] `includes/class-activator.php` — namespace `AIDC\Includes`; class `Activator` with static `activate(): void` (empty for now).
-  - [ ] `includes/class-deactivator.php` — namespace `AIDC\Includes`; class `Deactivator` with static `deactivate(): void` (empty for now).
-  - [ ] `includes/class-i18n.php` — namespace `AIDC\Includes`; class `I18n` with `register()` that later hooks `load_plugin_textdomain`.
+  - [x] `includes/class-plugin.php` — namespace `AIDC\Includes`; class `Plugin` with `instance()` and `boot()` (empty `boot()` for now).
+  - [x] `includes/class-activator.php` — namespace `AIDC\Includes`; class `Activator` with static `activate(): void` (empty for now).
+  - [x] `includes/class-deactivator.php` — namespace `AIDC\Includes`; class `Deactivator` with static `deactivate(): void` (empty for now).
+  - [x] `includes/class-i18n.php` — namespace `AIDC\Includes`; class `I18n` with `register()` that later hooks `load_plugin_textdomain`.
 - Do not change current loader (`aidc_init`) yet. This phase introduces files only.
 - PR checklist:
-  - [ ] New files added, autoload not required, no references from runtime.
-  - [ ] No fatal errors when activating plugin.
+  - [x] New files added, autoload not required, no references from runtime.
+  - [x] No fatal errors when activating plugin.
 
 ### Phase 1 — CPT + Meta extraction
 - Create file:
