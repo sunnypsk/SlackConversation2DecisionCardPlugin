@@ -66,12 +66,14 @@ class Plugin {
 	 * Boot the plugin.
 	 *
 	 * This method will be used to initialize all plugin functionality.
-	 * Currently empty for Phase 0 - no behavior changes.
+	 * Phase 1 adds CPT registration.
 	 *
 	 * @since 1.3.0
 	 */
 	public function boot() {
-		// Empty for now - Phase 0 introduces structure only
+		// Phase 1: Register Custom Post Type and Meta Fields
+		require_once AIDC_PLUGIN_DIR . 'includes/class-cpt.php';
+		( new \AIDC\Includes\Cpt() )->register();
 	}
 
 	/**

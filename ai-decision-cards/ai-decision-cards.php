@@ -84,7 +84,8 @@ class AIDC_Plugin {
 	 * @since 1.0.0
 	 */
 	private function init_hooks() {
-		add_action( 'init', array( $this, 'register_cpt' ) );
+		// Phase 1: Moved to AIDC\Includes\Cpt class
+		// add_action( 'init', array( $this, 'register_cpt' ) );
 		add_action( 'init', array( $this, 'register_shortcodes' ) );
 		add_action( 'admin_menu', array( $this, 'register_admin_pages' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
@@ -1735,6 +1736,11 @@ Rules:
  */
 function aidc_init() {
 	AIDC_Plugin::get_instance();
+	
+	// Phase 1: Temporary loading of new CPT class
+	// (Will be moved to new bootstrap system in Phase 8)
+	require_once AIDC_PLUGIN_DIR . 'includes/class-cpt.php';
+	( new \AIDC\Includes\Cpt() )->register();
 }
 add_action( 'plugins_loaded', 'aidc_init' );
 

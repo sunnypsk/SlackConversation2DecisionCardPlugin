@@ -22,6 +22,8 @@ This is a WordPress plugin that converts Slack-style conversations into summariz
 
 The complete Product Requirements Document (PRD) is available at `docs/prd.md`.
 
+For the upcoming v1.3.0 modularization refactor, see the detailed implementation plan at `docs/todo_list.md`.
+
 ## Development Timeline
 
 This is planned as a 1-week MVP build following the milestone breakdown in the PRD.
@@ -64,6 +66,7 @@ This project follows standard WordPress plugin development practices:
 
 ## Architecture Notes
 
+### Current Architecture (v1.2.1)
 - **Main Plugin File**: `ai-decision-cards/ai-decision-cards.php` contains the core plugin logic
 - **Custom Post Type**: `decision_card` for storing generated decision records (public visibility enabled for preview)
 - **Admin Pages**: Settings page for API configuration and generation interface
@@ -78,7 +81,43 @@ This project follows standard WordPress plugin development practices:
 - **Relative Date Processing**: AI automatically detects and handles relative time phrases
 - **User Guidance**: Built-in documentation system in Settings page and edit screens
 
-## Latest Upgrades (v1.2.0 - Current Version)
+### Planned Architecture (v1.3.0)
+- **Modular Structure**: Organized into `includes/`, `admin/`, `public/` directories
+- **Namespace Organization**: `AIDC\Includes`, `AIDC\Admin`, `AIDC\PublicUi`
+- **Class-Based Design**:
+  - `Plugin` class: Main orchestrator with singleton pattern
+  - `Cpt` class: Custom post type and metadata registration
+  - `AiClient` class: API communication with OpenAI-compatible services  
+  - `Generator` class: Conversation processing and Decision Card creation
+  - `Admin` class: Administrative interface and menu management
+  - `Shortcodes` class: Public shortcode rendering
+  - `AdminAssets` / `PublicAssets` classes: Asset management
+- **View Templates**: Presentation logic separated into `admin/views/` and `public/views/`
+- **Enhanced Security**: Improved sanitization, nonce verification, and capability checks
+- **Maintained Compatibility**: All public APIs, option names, and meta keys unchanged
+
+## Development Roadmap
+
+### Planned v1.3.0 — Modularization Refactor
+- **Comprehensive Code Restructure**: Migration from single PHP file to modular, class-based architecture
+- **8-Phase Implementation Plan**: Detailed roadmap in `docs/todo_list.md` for systematic refactor
+- **Namespace Organization**: `AIDC\*` namespace with consistent prefixes (`aidc_` / `_aidc_`)
+- **Separation of Concerns**: Logic in classes, presentation in `views/` directories
+- **Enhanced Security & Standards**: WordPress coding standards compliance with proper sanitization
+- **No Breaking Changes**: Maintains all public APIs, option names, and meta keys during transition
+- **Target Release**: After completing all 8 phases of modularization plan
+
+### Phase Structure Overview
+1. **Bootstrap Skeleton**: Basic class infrastructure without functional changes
+2. **CPT + Meta Extraction**: Custom post type and metadata handling
+3. **Public Layer**: Assets, content filters, and shortcodes
+4. **Admin Layer**: Menu pages, views, and administrative interface
+5. **Generator & AI Client**: Conversation processing and API integration
+6. **Admin AJAX**: Test API functionality
+7. **Helpers & Utilities**: Shared utility functions
+8. **Finalization**: QA, documentation updates, version bump
+
+## Latest Upgrades (v1.2.1 - Current Version)
 
 ### Shortcode & Display System
 - **Comprehensive Shortcode Support**: Two powerful shortcodes for flexible embedding
