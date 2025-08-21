@@ -36,6 +36,7 @@ When testing, use various conversation inputs to ensure:
 - Preview functionality works for generated Decision Cards
 - Shortcode functionality works correctly with all parameters
 - Public display pages show cards with proper search and filtering
+- Full-text search works on both titles and complete Decision Card content (Decision/Summary/Action Items/Sources/Risks sections)
 - URL parameter integration works (e.g., `?aidc_search=term&aidc_status=Approved`)
 - Filter form preserves existing page parameters during submission
 - Owner filtering works alongside status and search filtering
@@ -87,6 +88,9 @@ This project follows standard WordPress plugin development practices:
   - `aidc_search`, `aidc_status`, `aidc_owner` parameters automatically applied
   - Form state preservation maintains other query parameters during filtering
 - **Extended Owner Filtering**: Added owner field to filter forms for complete metadata filtering
+- **Enhanced Full-Text Search**: Custom search functionality that searches both titles and complete Decision Card content
+  - Searches Decision, Summary, Action Items, Sources, and Risks/Assumptions sections
+  - Improved discoverability of decisions based on specific keywords in content
 - **Public Display Pages**: Dedicated showcase pages with full functionality
 - **User Guidance Integration**: Built-in documentation and copy-paste shortcuts
 - **Edit Screen Enhancements**: Shortcode meta box with one-click selection
@@ -110,6 +114,7 @@ This project follows standard WordPress plugin development practices:
 ### Technical Improvements
 - **Direct HTML Generation**: AI prompt modified to output HTML directly instead of Markdown for perfect rendering
 - **Advanced Shortcode Engine**: Flexible parameter system with comprehensive error handling
+- **Custom Search Implementation**: Uses WordPress `posts_where` filter for full-text search across titles and content
 - **Public Display Infrastructure**: Complete page system with search, filtering, and pagination
 - **Enhanced User Experience**: Interactive guidance and streamlined workflows
 - Increased max_tokens to 600 for better AI responses

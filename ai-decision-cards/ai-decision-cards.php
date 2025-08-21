@@ -50,6 +50,13 @@ class AIDC_Plugin {
 	private static $instance = null;
 
 	/**
+	 * Current search term for custom search functionality.
+	 *
+	 * @var string
+	 */
+	private $current_search_term = '';
+
+	/**
 	 * Get single instance of the plugin.
 	 *
 	 * @return AIDC_Plugin
@@ -240,7 +247,10 @@ class AIDC_Plugin {
 
 		// Add search
 		if ( ! empty( $search ) ) {
-			$query_args['s'] = $search;
+			// Use custom search to include both title and content
+			add_filter( 'posts_where', array( $this, 'custom_search_where' ), 10, 2 );
+			// Store search term for the filter
+			$this->current_search_term = $search;
 		}
 
 		// Add meta query for filters
@@ -264,6 +274,11 @@ class AIDC_Plugin {
 		}
 
 		$query = new WP_Query( $query_args );
+		
+		// Remove custom search filter after query
+		if ( ! empty( $search ) ) {
+			remove_filter( 'posts_where', array( $this, 'custom_search_where' ), 10 );
+		}
 
 		ob_start();
 		?>
@@ -1655,7 +1670,10 @@ Rules:
 
 		// Add search
 		if ( ! empty( $search ) ) {
-			$args['s'] = $search;
+			// Use custom search to include both title and content
+			add_filter( 'posts_where', array( $this, 'custom_search_where' ), 10, 2 );
+			// Store search term for the filter
+			$this->current_search_term = $search;
 		}
 
 		// Add meta query for filters
@@ -1679,6 +1697,11 @@ Rules:
 		}
 
 		$query = new WP_Query( $args );
+		
+		// Remove custom search filter after query
+		if ( ! empty( $search ) ) {
+			remove_filter( 'posts_where', array( $this, 'custom_search_where' ), 10 );
+		}
 
 		if ( $query->have_posts() ) : ?>
 			<div class="aidc-cards-grid">
@@ -2188,6 +2211,37 @@ Rules:
 		);
 		wp_redirect( $url );
 		exit;
+	}
+
+	/**
+	 * Custom search WHERE clause to search both title and content.
+	 *
+	 * @param string   $where WHERE clause.
+	 * @param WP_Query $query The WP_Query instance.
+	 * @return string Modified WHERE clause.
+	 */
+	public function custom_search_where( $where, $query ) {
+		global $wpdb;
+
+		if ( empty( $this->current_search_term ) ) {
+			return $where;
+		}
+
+		// Only apply to decision_card post type queries
+		if ( ! isset( $query->query_vars['post_type'] ) || 'decision_card' !== $query->query_vars['post_type'] ) {
+			return $where;
+		}
+
+		$search_term = esc_sql( $wpdb->esc_like( $this->current_search_term ) );
+		
+		// Create custom search condition for title and content
+		$custom_where = $wpdb->prepare(
+			"AND (({$wpdb->posts}.post_title LIKE %s) OR ({$wpdb->posts}.post_content LIKE %s))",
+			'%' . $search_term . '%',
+			'%' . $search_term . '%'
+		);
+
+		return $where . ' ' . $custom_where;
 	}
 }
 

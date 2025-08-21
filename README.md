@@ -43,7 +43,7 @@ SlackConversaton2DecisionCardPlugin/
 - **📅 Smart Date Handling**: Automatically processes relative dates ("next week") with follow-up tasks
 - **🎨 Public Display Pages**: Dedicated pages for showcasing Decision Cards to website visitors
 - **🔗 Shortcode Support**: Flexible embedding options for pages and posts
-  - `[decision-cards-list]` - Display filterable grid of Decision Cards
+  - `[decision-cards-list]` - Display filterable grid with full-text search capability
   - `[decision-card id="123"]` - Embed specific Decision Card
 - **📖 Comprehensive User Guidance**: Built-in documentation and copy-paste shortcodes
 - **👀 Preview Functionality**: Full preview capability for generated Decision Cards
@@ -55,9 +55,12 @@ SlackConversaton2DecisionCardPlugin/
 
 ### 🔗 Shortcode & Display Features
 - **Comprehensive Shortcode System**: Full embedding support for Decision Cards
-  - `[decision-cards-list]` with filtering, pagination, and search
+  - `[decision-cards-list]` with filtering, pagination, and enhanced full-text search
   - `[decision-card id="123"]` for single card embedding
-  - Parameters: `limit`, `status`, `owner`, `show_meta`, `excerpt_only`
+  - Parameters: `limit`, `status`, `owner`, `search`, `show_meta`, `excerpt_only`
+- **🔍 Enhanced Full-Text Search**: Smart search functionality that searches both titles and complete Decision Card content
+  - Searches across Decision, Summary, Action Items, Sources, and Risks/Assumptions sections
+  - Improved discoverability of decisions based on specific keywords in content
 - **Public Display Pages**: Dedicated showcase pages for website visitors
 - **User Guidance Integration**: Built-in documentation in Settings page
 - **Edit Screen Shortcuts**: Copy-paste shortcodes directly from Decision Card editor
@@ -73,7 +76,8 @@ SlackConversaton2DecisionCardPlugin/
 ### 🔧 Technical Improvements
 - **Direct HTML Output**: AI now generates HTML directly instead of Markdown for perfect rendering
 - **Advanced Shortcode Engine**: Flexible parameter system with error handling
-- **Public Display Infrastructure**: Complete page system with search and filtering
+- **Custom Search Implementation**: Uses WordPress `posts_where` filter for full-text search across titles and content
+- **Public Display Infrastructure**: Complete page system with enhanced search and filtering
 - **Enhanced User Experience**: Interactive elements and guided workflows
 - Enhanced HTML tag support for better formatting
 - Public post type visibility for preview functionality
