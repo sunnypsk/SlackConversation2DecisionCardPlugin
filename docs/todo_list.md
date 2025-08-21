@@ -31,14 +31,14 @@ Acceptance
 
 ---
 
-## Phase 1 — CPT + Meta extraction
-- [ ] Create `includes/class-cpt.php` and move `register_cpt()` and `register_meta_fields()`.
-- [ ] Hook registration on `init` inside the class.
-- [ ] Ensure rewrite flush on activation via `Activator`.
+## Phase 1 — CPT + Meta extraction ✅ **COMPLETED**
+- [x] Create `includes/class-cpt.php` and move `register_cpt()` and `register_meta_fields()`.
+- [x] Hook registration on `init` inside the class.
+- [x] Ensure rewrite flush on activation via `Activator` (handled via temporary dual loading).
 
 Acceptance
-- [ ] `decision_card` CPT present and editable.
-- [ ] Meta `_aidc_status`, `_aidc_owner`, `_aidc_due` work unchanged.
+- [x] `decision_card` CPT present and editable.
+- [x] Meta `_aidc_status`, `_aidc_owner`, `_aidc_due` work unchanged.
 
 ---
 
@@ -163,23 +163,25 @@ The steps below specify exactly what to create/change, where to move code from `
   - [x] New files added, autoload not required, no references from runtime.
   - [x] No fatal errors when activating plugin.
 
-### Phase 1 — CPT + Meta extraction
+### Phase 1 — CPT + Meta extraction ✅ **COMPLETED**
 - Create file:
-  - [ ] `includes/class-cpt.php` — namespace `AIDC\Includes`.
+  - [x] `includes/class-cpt.php` — namespace `AIDC\Includes`.
     - Methods: `register(): void` (hooks `init`), `register_cpt(): void`, `register_meta_fields(): void` (copy logic from `AIDC_Plugin::register_cpt()` and `register_meta_fields()`).
 - Wire-up (minimal, non-breaking):
-  - [ ] In `includes/class-plugin.php`, inside `boot()`, require `class-cpt.php` and call `(new \AIDC\Includes\Cpt())->register();`.
-  - [ ] In `ai-decision-cards.php`, temporarily disable duplicate registration by guarding the original call paths:
+  - [x] In `includes/class-plugin.php`, inside `boot()`, require `class-cpt.php` and call `(new \AIDC\Includes\Cpt())->register();`.
+  - [x] In `ai-decision-cards.php`, temporarily disable duplicate registration by guarding the original call paths:
     - In `AIDC_Plugin::init_hooks()`, comment or remove the `add_action( 'init', [ $this, 'register_cpt' ] )` line.
     - Keep `register_meta_fields()` only within new class.
     - Note: This is the only edit in the legacy class for this phase.
+  - [x] **Additional**: Added temporary dual loading in `aidc_init()` to ensure new CPT class works before Phase 8 bootstrap switch.
 - Testing:
-  - [ ] Visit Admin > Decision Cards. Create/edit a post.
-  - [ ] Confirm CPT UI and meta still work.
-  - [ ] Hard refresh permalinks if needed.
+  - [x] Visit Admin > Decision Cards. Create/edit a post.
+  - [x] Confirm CPT UI and meta still work.
+  - [x] Hard refresh permalinks if needed.
 - PR checklist:
-  - [ ] No duplicate CPT registration warnings or errors.
-  - [ ] Activation flush handled (temporarily still via legacy, moved in Phase 0/8).
+  - [x] No duplicate CPT registration warnings or errors.
+  - [x] Activation flush handled (temporarily still via legacy, moved in Phase 0/8).
+  - [x] **Fixed**: Invalid CSS block in shortcode meta box removed.
 
 ### Phase 2 — Public layer (assets, content filter, shortcodes)
 - Create files:

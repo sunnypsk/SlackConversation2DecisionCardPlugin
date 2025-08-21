@@ -551,14 +551,6 @@ class AIDC_Plugin {
 		</div>
 		
 		<!-- Styles moved to assets/css/admin.css -->
-			.aidc-shortcode-meta-box input[readonly] {
-				cursor: pointer;
-			}
-			.aidc-shortcode-meta-box input[readonly]:focus {
-				box-shadow: 0 0 5px rgba(0,123,255,0.3);
-				border-color: #007cba;
-			}
-		</style>
 		<?php
 	}
 
