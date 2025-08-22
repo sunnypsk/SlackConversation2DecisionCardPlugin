@@ -67,19 +67,19 @@ class AdminAssets {
 			// Public styles are also needed for previewing display inside admin
 			wp_enqueue_style(
 				'aidc-public',
-				plugins_url( 'assets/css/public.css', dirname( __FILE__ ) ),
+				plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/css/public.css',
 				array(),
 				AIDC_VERSION
 			);
 			wp_enqueue_style(
 				'aidc-admin',
-				plugins_url( 'assets/css/admin.css', dirname( __FILE__ ) ),
+				plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/css/admin.css',
 				array(),
 				AIDC_VERSION
 			);
 			wp_enqueue_script(
 				'aidc-admin',
-				plugins_url( 'assets/js/admin.js', dirname( __FILE__ ) ),
+				plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/js/admin.js',
 				array( 'jquery' ),
 				AIDC_VERSION,
 				true
@@ -89,7 +89,7 @@ class AdminAssets {
 			if ( in_array( $screen->id, array( 'decision_card_page_aidc_display', 'toplevel_page_decision-cards-display' ), true ) ) {
 				wp_enqueue_script(
 					'aidc-public',
-					plugins_url( 'assets/js/public.js', dirname( __FILE__ ) ),
+					plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/js/public.js',
 					array(),
 					AIDC_VERSION,
 					true

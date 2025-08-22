@@ -50,14 +50,14 @@ class PublicAssets {
 		// Always load public CSS since shortcodes may appear on any page
 		wp_enqueue_style(
 			'aidc-public',
-			plugins_url( 'assets/css/public.css', dirname( __FILE__ ) ),
+			plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/css/public.css',
 			array(),
 			AIDC_VERSION
 		);
 
 		wp_enqueue_script(
 			'aidc-public',
-			plugins_url( 'assets/js/public.js', dirname( __FILE__ ) ),
+			plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/js/public.js',
 			array(),
 			AIDC_VERSION,
 			true

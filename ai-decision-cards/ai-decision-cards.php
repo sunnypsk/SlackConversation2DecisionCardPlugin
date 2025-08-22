@@ -97,7 +97,8 @@ class AIDC_Plugin {
 		// add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		// add_action( 'add_meta_boxes', array( $this, 'add_shortcode_meta_box' ) );
 		
-		add_action( 'admin_post_aidc_generate', array( $this, 'handle_generate' ) );
+		// Phase 4: Moved to AIDC\Includes\Generator class
+		// add_action( 'admin_post_aidc_generate', array( $this, 'handle_generate' ) );
 		add_action( 'wp_ajax_aidc_test_api', array( $this, 'handle_api_test' ) );
 	}
 

@@ -69,14 +69,14 @@ Acceptance
 
 ---
 
-## Phase 4 — Generator (admin-post) + AI client
-- [ ] Create `includes/class-ai-client.php` (OpenAI-compatible): endpoint building, headers, requests, error handling.
-- [ ] Create `includes/class-generator.php` and move `handle_generate()`; register `admin_post_aidc_generate`.
-- [ ] Keep current prompt and sanitization.
+## Phase 4 — Generator (admin-post) + AI client ✅ **COMPLETED**
+- [x] Create `includes/class-ai-client.php` (OpenAI-compatible): endpoint building, headers, requests, error handling.
+- [x] Create `includes/class-generator.php` and move `handle_generate()`; register `admin_post_aidc_generate`.
+- [x] Keep current prompt and sanitization.
 
 Acceptance
-- [ ] Generate form creates a draft `decision_card` with meta.
-- [ ] Errors/notices redirect as before.
+- [x] Generate form creates a draft `decision_card` with meta.
+- [x] Errors/notices redirect as before.
 
 ---
 
@@ -223,20 +223,20 @@ The steps below specify exactly what to create/change, where to move code from `
 - PR checklist:
   - [x] Nonces/capabilities preserved (`manage_options`, `edit_posts`, `read`).
 
-### Phase 4 — Generator (admin-post) + AI client
+### Phase 4 — Generator (admin-post) + AI client ✅ **COMPLETED**
 - Create files:
-  - [ ] `includes/class-ai-client.php` — namespace `AIDC\Includes`; class `AiClient` with `completeChat( $endpointBase, $apiKey, $model, array $messages, array $options=[] ): array` returning decoded array or throwing `WP_Error`.
-  - [ ] `includes/class-generator.php` — namespace `AIDC\Includes`; class `Generator` with `register()` to hook `admin_post_aidc_generate`; move logic from `AIDC_Plugin::handle_generate()`; call `AiClient`.
+  - [x] `includes/class-ai-client.php` — namespace `AIDC\Includes`; class `AiClient` with `completeChat( $endpointBase, $apiKey, $model, array $messages, array $options=[] ): array` returning decoded array or throwing `WP_Error`.
+  - [x] `includes/class-generator.php` — namespace `AIDC\Includes`; class `Generator` with `register()` to hook `admin_post_aidc_generate`; move logic from `AIDC_Plugin::handle_generate()`; call `AiClient`.
 - Behavior parity:
-  - [ ] Preserve prompt, sanitization (`wp_kses` allowed tags), post creation, meta updates, and redirects.
+  - [x] Preserve prompt, sanitization (`wp_kses` allowed tags), post creation, meta updates, and redirects.
 - Wiring:
-  - [ ] In `includes/class-plugin.php::boot()`, instantiate `Generator` unconditionally (admin-post runs in admin context).
-  - [ ] In legacy `AIDC_Plugin::init_hooks()`, comment/remove `admin_post_aidc_generate` hook registration.
+  - [x] In `includes/class-plugin.php::boot()`, instantiate `Generator` unconditionally (admin-post runs in admin context).
+  - [x] In legacy `AIDC_Plugin::init_hooks()`, comment/remove `admin_post_aidc_generate` hook registration.
 - Testing:
-  - [ ] Submitting Generate form creates draft and redirects to edit screen.
-  - [ ] Error cases show admin notices.
+  - [x] Submitting Generate form creates draft and redirects to edit screen.
+  - [x] Error cases show admin notices.
 - PR checklist:
-  - [ ] Timeouts, headers, and endpoint selection (`.../v1/` vs `v1/chat/completions`) match current behavior.
+  - [x] Timeouts, headers, and endpoint selection (`.../v1/` vs `v1/chat/completions`) match current behavior.
 
 ### Phase 5 — Admin AJAX (Test API)
 - Create file:

@@ -69,6 +69,7 @@ class Plugin {
 	 * Phase 1 adds CPT registration.
 	 * Phase 2 adds Public layer (assets, content filter, shortcodes).
 	 * Phase 3 adds Admin layer (menus, pages, assets, notices).
+	 * Phase 4 adds Generator (admin-post) + AI client.
 	 *
 	 * @since 1.3.0
 	 */
@@ -95,6 +96,11 @@ class Plugin {
 			require_once AIDC_PLUGIN_DIR . 'admin/class-admin.php';
 			( new \AIDC\Admin\Admin() )->register();
 		}
+
+		// Phase 4: Register Generator (admin-post runs in admin context)
+		require_once AIDC_PLUGIN_DIR . 'includes/class-ai-client.php';
+		require_once AIDC_PLUGIN_DIR . 'includes/class-generator.php';
+		( new \AIDC\Includes\Generator() )->register();
 	}
 
 	/**
