@@ -34,13 +34,24 @@ class I18n {
 	/**
 	 * Register internationalization hooks.
 	 *
-	 * This method will register the hooks needed for plugin textdomain loading.
-	 * Currently empty for Phase 0 - no behavior changes.
+	 * Hooks load_plugin_textdomain to plugins_loaded action.
+	 * Logic moved from aidc_load_textdomain() during Phase 8.
 	 *
 	 * @since 1.3.0
 	 */
 	public function register() {
-		// Empty for now - Phase 0 introduces structure only
-		// Future implementation will hook load_plugin_textdomain
+		// Register on 'init' so registration works even when called during 'plugins_loaded'.
+		add_action( 'init', array( $this, 'load_textdomain' ) );
+	}
+
+	/**
+	 * Load plugin textdomain for translations.
+	 *
+	 * Moved from aidc_load_textdomain() function during Phase 8.
+	 *
+	 * @since 1.3.0
+	 */
+	public function load_textdomain() {
+		load_plugin_textdomain( 'ai-decision-cards', false, dirname( plugin_basename( AIDC_PLUGIN_FILE ) ) . '/languages' );
 	}
 }

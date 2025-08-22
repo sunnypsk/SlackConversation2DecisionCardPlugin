@@ -74,6 +74,10 @@ class Plugin {
 	 * @since 1.3.0
 	 */
 	public function boot() {
+		// Phase 8: Register internationalization
+		require_once AIDC_PLUGIN_DIR . 'includes/class-i18n.php';
+		( new \AIDC\Includes\I18n() )->register();
+
 		// Phase 6: Load shared utility helpers
 		require_once AIDC_PLUGIN_DIR . 'includes/class-helpers.php';
 

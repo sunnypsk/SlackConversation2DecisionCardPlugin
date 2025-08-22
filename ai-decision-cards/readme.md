@@ -163,6 +163,14 @@ This plugin follows WordPress coding standards and best practices:
 
 ## Changelog
 
+### 1.3.0
+- Refactor: Switched to modular architecture with a central `Plugin` orchestrator
+- Refactor: Extracted admin/public/generator/helpers into dedicated classes and views
+- Refactor: Moved activation/deactivation logic into `Activator`/`Deactivator`
+- Refactor: Introduced `I18n` loader and finalized bootstrap via `plugins_loaded`
+- UI: Views cleaned up; styles/scripts moved to assets; admin display now previews via shortcode
+- Fix: Avoid duplicated hooks; DRY endpoint helper for OpenAI-compatible services
+
 ### 1.2.1
 - **New**: Translation-ready. A template is included so you can add your language.
 - **New**: One-click public Decision Cards page from the admin menu.

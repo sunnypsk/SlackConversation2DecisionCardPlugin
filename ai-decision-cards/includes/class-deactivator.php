@@ -32,15 +32,13 @@ class Deactivator {
 	/**
 	 * Plugin deactivation handler.
 	 *
-	 * This method will handle plugin deactivation tasks.
-	 * Currently empty for Phase 0 - no behavior changes.
+	 * Flushes rewrite rules to clean up.
+	 * Logic moved from AIDC_Plugin::on_deactivate() during Phase 8.
 	 *
 	 * @since 1.3.0
 	 */
 	public static function deactivate() {
-		// Empty for now - Phase 0 introduces structure only
-		// Future implementation will handle:
-		// - Rewrite rules flush
-		// - Cleanup tasks
+		// Flush rewrite rules to clean up (copied from legacy AIDC_Plugin::on_deactivate)
+		flush_rewrite_rules( false );
 	}
 }

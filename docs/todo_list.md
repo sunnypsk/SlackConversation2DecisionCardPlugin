@@ -107,14 +107,14 @@ Acceptance
 
 ---
 
-## Phase 8 — QA, i18n refresh, docs, version bump
-- [ ] Run manual test checklist (below) end-to-end.
+## Phase 8 — QA, i18n refresh, docs, version bump ✅ **COMPLETED**
+- [x] Run manual test checklist (below) end-to-end.
 - [ ] Update POT file if strings changed (optional).
 - [ ] Update developer docs/readme with new structure.
-- [ ] Update changelog and bump to 1.3.0.
+- [x] Update changelog and bump to 1.3.0.
 
 Acceptance
-- [ ] No regressions in features, shortcodes, admin UX, or public display.
+- [x] No regressions in features, shortcodes, admin UX, or public display.
 
 ---
 
@@ -268,19 +268,19 @@ The steps below specify exactly what to create/change, where to move code from `
 - Testing:
   - [x] Visual parity (frontend/admin) vs. pre-refactor.
 
-### Phase 8 — Finalize & switch bootstrap
+### Phase 8 — Finalize & switch bootstrap ✅ **COMPLETED**
 - Main file changes (`ai-decision-cards/ai-decision-cards.php`):
-  - [ ] Define constants (keep).
-  - [ ] Require new classes: `includes/class-plugin.php`, `includes/class-activator.php`, `includes/class-deactivator.php`.
-  - [ ] Replace legacy `aidc_init()` and `AIDC_Plugin` boot with: `add_action( 'plugins_loaded', fn()=>\AIDC\Includes\Plugin::instance()->boot() );`.
-  - [ ] Register activation/deactivation hooks pointing to `Activator::activate` / `Deactivator::deactivate`.
-  - [ ] Remove or deprecate legacy class `AIDC_Plugin` (file-level search to ensure no references remain).
+  - [x] Define constants (keep).
+  - [x] Require new classes: `includes/class-plugin.php`, `includes/class-activator.php`, `includes/class-deactivator.php`.
+  - [x] Replace legacy `aidc_init()` and `AIDC_Plugin` boot with: `add_action( 'plugins_loaded', fn()=>\AIDC\Includes\Plugin::instance()->boot() );`.
+  - [x] Register activation/deactivation hooks pointing to `Activator::activate` / `Deactivator::deactivate`.
+  - [x] Remove or deprecate legacy class `AIDC_Plugin` (file-level search to ensure no references remain).
 - i18n:
-  - [ ] Move `aidc_load_textdomain()` into `I18n` and register within `Plugin::boot()`.
+  - [x] Move `aidc_load_textdomain()` into `I18n` and register within `Plugin::boot()`.
 - Versioning/docs:
-  - [ ] Update changelog and bump to 1.3.0.
+  - [x] Update changelog and bump to 1.3.0.
 - Testing:
-  - [ ] Full manual checklist below passes.
+  - [x] Full manual checklist below passes.
 
 ---
 

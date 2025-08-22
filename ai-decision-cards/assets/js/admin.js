@@ -100,9 +100,22 @@
 		});
 	}
 
+	function initShortcodeMetaBox(){
+		var shortcodeInputs = qsa('.aidc-shortcode-input');
+		if(!shortcodeInputs || shortcodeInputs.length === 0) return;
+		
+		// Add click event to all shortcode inputs for auto-selection
+		for(var i = 0; i < shortcodeInputs.length; i++){
+			shortcodeInputs[i].addEventListener('click', function(){
+				this.select();
+			});
+		}
+	}
+
 	document.addEventListener('DOMContentLoaded', function(){
 		initSettingsPage();
 		initGeneratePage();
+		initShortcodeMetaBox();
 	});
 })();
 

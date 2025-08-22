@@ -236,21 +236,26 @@ class Admin {
 	/**
 	 * Render public display page.
 	 *
+	 * Uses the Shortcodes class to render the public display functionality.
+	 * This provides a consistent experience between admin and public views.
+	 *
 	 * @since 1.3.0
 	 */
 	public function render_public_display_page() {
-		// This page will reuse public functionality for consistency
-		// For now, delegate to legacy method during transition
-		if ( class_exists( 'AIDC_Plugin' ) ) {
-			$legacy_instance = \AIDC_Plugin::get_instance();
-			if ( method_exists( $legacy_instance, 'render_public_display_page' ) ) {
-				$legacy_instance->render_public_display_page();
-				return;
-			}
-		}
-
-		// Fallback if legacy method not available
-		echo '<div class="wrap"><h1>' . esc_html__( 'Decision Cards Display', 'ai-decision-cards' ) . '</h1><p>' . esc_html__( 'Public display functionality will be available after full migration.', 'ai-decision-cards' ) . '</p></div>';
+		// Use the shortcode system to render the display
+		// This ensures consistency with the public shortcode functionality
+		echo '<div class="aidc-public-display">';
+		echo '<div class="aidc-container">';
+		echo '<header class="aidc-header">';
+		echo '<h1>' . esc_html__( 'Decision Cards', 'ai-decision-cards' ) . '</h1>';
+		echo '<p>' . esc_html__( 'AI-generated decision summaries from team conversations', 'ai-decision-cards' ) . '</p>';
+		echo '</header>';
+		
+		// Render the shortcode (this will use our Shortcodes class)
+		echo do_shortcode( '[decision-cards-list]' );
+		
+		echo '</div>';
+		echo '</div>';
 	}
 
 	/**
@@ -276,17 +281,8 @@ class Admin {
 	 * @param WP_Post $post The current post object.
 	 */
 	public function render_shortcode_meta_box( $post ) {
-		// Delegate to legacy method during transition
-		if ( class_exists( 'AIDC_Plugin' ) ) {
-			$legacy_instance = \AIDC_Plugin::get_instance();
-			if ( method_exists( $legacy_instance, 'render_shortcode_meta_box' ) ) {
-				$legacy_instance->render_shortcode_meta_box( $post );
-				return;
-			}
-		}
-
-		// Fallback if legacy method not available
-		echo '<p>' . esc_html__( 'Shortcode functionality will be available after full migration.', 'ai-decision-cards' ) . '</p>';
+		// Render view with post data
+		$this->render_view( 'shortcode-meta-box', array( 'post' => $post ) );
 	}
 
 	/**

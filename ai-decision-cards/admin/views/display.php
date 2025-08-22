@@ -24,18 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<p><a href="<?php echo esc_url( $public_page_url ); ?>" target="_blank" class="button button-secondary"><?php esc_html_e( 'View Public Display Page', 'ai-decision-cards' ); ?></a></p>
 	
 	<?php
-	// Reuse the legacy render_cards_list method during transition
-	if ( class_exists( 'AIDC_Plugin' ) ) {
-		$legacy_instance = \AIDC_Plugin::get_instance();
-		if ( method_exists( $legacy_instance, 'render_cards_list' ) ) {
-			// Use reflection to access private method during transition
-			$reflection = new ReflectionClass( $legacy_instance );
-			$method = $reflection->getMethod( 'render_cards_list' );
-			$method->setAccessible( true );
-			$method->invoke( $legacy_instance );
-		}
-	} else {
-		echo '<p>' . esc_html__( 'Cards list functionality will be available after full migration.', 'ai-decision-cards' ) . '</p>';
-	}
+	// Render a live preview using the shortcode output.
+	echo do_shortcode( '[decision-cards-list]' );
 	?>
 </div>
