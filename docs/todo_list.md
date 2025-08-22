@@ -42,17 +42,17 @@ Acceptance
 
 ---
 
-## Phase 2 — Public layer (assets, content filter, shortcodes)
-- [ ] Create `public/class-public-assets.php` to enqueue public CSS/JS.
-- [ ] Create `public/class-public.php` and move: `prepend_meta_banner()`, `get_or_create_public_page_url()`.
-- [ ] Create `public/class-shortcodes.php`; move `register_shortcodes()`, `shortcode_decision_cards_list()`, `shortcode_single_decision_card()`.
-- [ ] Extract shortcode HTML into `public/views/shortcode-list.php` and `public/views/shortcode-single.php`.
-- [ ] Keep `custom_search_where()` with shortcodes (or a small helper if shared).
+## Phase 2 — Public layer (assets, content filter, shortcodes) ✅ **COMPLETED**
+- [x] Create `public/class-public-assets.php` to enqueue public CSS/JS.
+- [x] Create `public/class-public.php` and move: `prepend_meta_banner()`, `get_or_create_public_page_url()`.
+- [x] Create `public/class-shortcodes.php`; move `register_shortcodes()`, `shortcode_decision_cards_list()`, `shortcode_single_decision_card()`.
+- [x] Extract shortcode HTML into `public/views/shortcode-list.php` and `public/views/shortcode-single.php`.
+- [x] Keep `custom_search_where()` with shortcodes (or a small helper if shared).
 
 Acceptance
-- [ ] Shortcodes render identically (list and single) across themes.
-- [ ] Banner prepends on `decision_card` content.
-- [ ] Public page helper returns a working permalink.
+- [x] Shortcodes render identically (list and single) across themes.
+- [x] Banner prepends on `decision_card` content.
+- [x] Public page helper returns a working permalink.
 
 ---
 
@@ -183,26 +183,26 @@ The steps below specify exactly what to create/change, where to move code from `
   - [x] Activation flush handled (temporarily still via legacy, moved in Phase 0/8).
   - [x] **Fixed**: Invalid CSS block in shortcode meta box removed.
 
-### Phase 2 — Public layer (assets, content filter, shortcodes)
+### Phase 2 — Public layer (assets, content filter, shortcodes) ✅ **COMPLETED**
 - Create files:
-  - [ ] `public/class-public-assets.php` — namespace `AIDC\PublicUi`; method `register()` adds `wp_enqueue_scripts` hook; move logic from `AIDC_Plugin::enqueue_public_assets()`.
-  - [ ] `public/class-public.php` — namespace `AIDC\PublicUi`; method `register()` adds `the_content` filter for `prepend_meta_banner()` and exposes `get_or_create_public_page_url()`.
-  - [ ] `public/class-shortcodes.php` — namespace `AIDC\PublicUi`; method `register()` adds both shortcodes; methods `render_list_shortcode()` and `render_single_shortcode()`; keep `custom_search_where()` here.
-  - [ ] Views
-    - [ ] `public/views/shortcode-list.php` — markup only (list/grid; accept sanitized data).
-    - [ ] `public/views/shortcode-single.php` — markup only.
+  - [x] `public/class-public-assets.php` — namespace `AIDC\PublicUi`; method `register()` adds `wp_enqueue_scripts` hook; move logic from `AIDC_Plugin::enqueue_public_assets()`.
+  - [x] `public/class-public.php` — namespace `AIDC\PublicUi`; method `register()` adds `the_content` filter for `prepend_meta_banner()` and exposes `get_or_create_public_page_url()`.
+  - [x] `public/class-shortcodes.php` — namespace `AIDC\PublicUi`; method `register()` adds both shortcodes; methods `render_list_shortcode()` and `render_single_shortcode()`; keep `custom_search_where()` here.
+  - [x] Views
+    - [x] `public/views/shortcode-list.php` — markup only (list/grid; accept sanitized data).
+    - [x] `public/views/shortcode-single.php` — markup only.
 - Wiring:
-  - [ ] In `includes/class-plugin.php::boot()`, instantiate and call `register()` on the three public classes.
-  - [ ] In legacy `AIDC_Plugin::init_hooks()`, comment/remove: `register_shortcodes()` and `wp_enqueue_scripts` hook and `the_content` filter to prevent duplicates.
+  - [x] In `includes/class-plugin.php::boot()`, instantiate and call `register()` on the three public classes.
+  - [x] In legacy `AIDC_Plugin::init_hooks()`, comment/remove: `register_shortcodes()` and `wp_enqueue_scripts` hook and `the_content` filter to prevent duplicates.
 - Data flow rules:
-  - [ ] Prepare/sanitize data in classes; pass arrays to views; escape in views on output.
+  - [x] Prepare/sanitize data in classes; pass arrays to views; escape in views on output.
 - Testing:
-  - [ ] Shortcodes still render on frontend pages.
-  - [ ] Search, filters, pagination work.
-  - [ ] Banner still prepends to `decision_card` content.
+  - [x] Shortcodes still render on frontend pages.
+  - [x] Search, filters, pagination work.
+  - [x] Banner still prepends to `decision_card` content.
 - PR checklist:
-  - [ ] No duplicate hooks; assets load once.
-  - [ ] Views contain no business logic.
+  - [x] No duplicate hooks; assets load once.
+  - [x] Views contain no business logic.
 
 ### Phase 3 — Admin layer (menus, pages, assets, notices)
 - Create files:

@@ -86,14 +86,17 @@ class AIDC_Plugin {
 	private function init_hooks() {
 		// Phase 1: Moved to AIDC\Includes\Cpt class
 		// add_action( 'init', array( $this, 'register_cpt' ) );
-		add_action( 'init', array( $this, 'register_shortcodes' ) );
+		
+		// Phase 2: Moved to AIDC\PublicUi classes
+		// add_action( 'init', array( $this, 'register_shortcodes' ) );
+		// add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public_assets' ) );
+		// add_filter( 'the_content', array( $this, 'prepend_meta_banner' ), 5 );
+		
 		add_action( 'admin_menu', array( $this, 'register_admin_pages' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public_assets' ) );
 		add_action( 'admin_post_aidc_generate', array( $this, 'handle_generate' ) );
 		add_action( 'wp_ajax_aidc_test_api', array( $this, 'handle_api_test' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_shortcode_meta_box' ) );
-		add_filter( 'the_content', array( $this, 'prepend_meta_banner' ), 5 );
 	}
 
 	/**
@@ -1631,10 +1634,10 @@ Rules:
 function aidc_init() {
 	AIDC_Plugin::get_instance();
 	
-	// Phase 1: Temporary loading of new CPT class
+	// Phase 1 & 2: Temporary loading of new modular classes
 	// (Will be moved to new bootstrap system in Phase 8)
-	require_once AIDC_PLUGIN_DIR . 'includes/class-cpt.php';
-	( new \AIDC\Includes\Cpt() )->register();
+	require_once AIDC_PLUGIN_DIR . 'includes/class-plugin.php';
+	\AIDC\Includes\Plugin::instance()->boot();
 }
 add_action( 'plugins_loaded', 'aidc_init' );
 
