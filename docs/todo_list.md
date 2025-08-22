@@ -80,12 +80,12 @@ Acceptance
 
 ---
 
-## Phase 5 — Admin AJAX (Test API)
-- [ ] Create `admin/class-admin-ajax.php` and move `handle_api_test()`; register `wp_ajax_aidc_test_api`.
-- [ ] Keep response structure and messages.
+## Phase 5 — Admin AJAX (Test API) ✅ **COMPLETED**
+- [x] Create `admin/class-admin-ajax.php` and move `handle_api_test()`; register `wp_ajax_aidc_test_api`.
+- [x] Keep response structure and messages.
 
 Acceptance
-- [ ] Test API button returns success/error as before.
+- [x] Test API button returns success/error as before.
 
 ---
 
@@ -238,16 +238,16 @@ The steps below specify exactly what to create/change, where to move code from `
 - PR checklist:
   - [x] Timeouts, headers, and endpoint selection (`.../v1/` vs `v1/chat/completions`) match current behavior.
 
-### Phase 5 — Admin AJAX (Test API)
+### Phase 5 — Admin AJAX (Test API) ✅ **COMPLETED**
 - Create file:
-  - [ ] `admin/class-admin-ajax.php` — namespace `AIDC\Admin`; class `AdminAjax` with `register()` to add `wp_ajax_aidc_test_api`; move `handle_api_test()` here.
+  - [x] `admin/class-admin-ajax.php` — namespace `AIDC\Admin`; class `AdminAjax` with `register()` to add `wp_ajax_aidc_test_api`; move `handle_api_test()` here.
 - Wiring:
-  - [ ] In `includes/class-plugin.php::boot()`, instantiate `AdminAjax` only in `is_admin()`.
-  - [ ] Remove legacy `wp_ajax_aidc_test_api` handler from `AIDC_Plugin`.
+  - [x] In `includes/class-plugin.php::boot()`, instantiate `AdminAjax` only in `is_admin()`.
+  - [x] Remove legacy `wp_ajax_aidc_test_api` handler from `AIDC_Plugin`.
 - Testing:
-  - [ ] Test API button flows through AJAX and reports success/error.
+  - [x] Test API button flows through AJAX and reports success/error.
 - PR checklist:
-  - [ ] Nonce and capability checks intact; JSON structure unchanged.
+  - [x] Nonce and capability checks intact; JSON structure unchanged.
 
 ### Phase 6 — Helpers / shared utilities
 - Create file:

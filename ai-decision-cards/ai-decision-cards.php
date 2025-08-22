@@ -99,7 +99,9 @@ class AIDC_Plugin {
 		
 		// Phase 4: Moved to AIDC\Includes\Generator class
 		// add_action( 'admin_post_aidc_generate', array( $this, 'handle_generate' ) );
-		add_action( 'wp_ajax_aidc_test_api', array( $this, 'handle_api_test' ) );
+		
+		// Phase 5: Moved to AIDC\Admin\AdminAjax class
+		// add_action( 'wp_ajax_aidc_test_api', array( $this, 'handle_api_test' ) );
 	}
 
 	/**

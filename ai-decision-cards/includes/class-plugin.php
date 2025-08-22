@@ -95,6 +95,10 @@ class Plugin {
 
 			require_once AIDC_PLUGIN_DIR . 'admin/class-admin.php';
 			( new \AIDC\Admin\Admin() )->register();
+
+			// Phase 5: Register Admin AJAX Handler
+			require_once AIDC_PLUGIN_DIR . 'admin/class-admin-ajax.php';
+			( new \AIDC\Admin\AdminAjax() )->register();
 		}
 
 		// Phase 4: Register Generator (admin-post runs in admin context)
