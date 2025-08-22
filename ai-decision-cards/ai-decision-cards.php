@@ -92,11 +92,13 @@ class AIDC_Plugin {
 		// add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_public_assets' ) );
 		// add_filter( 'the_content', array( $this, 'prepend_meta_banner' ), 5 );
 		
-		add_action( 'admin_menu', array( $this, 'register_admin_pages' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		// Phase 3: Moved to AIDC\Admin classes
+		// add_action( 'admin_menu', array( $this, 'register_admin_pages' ) );
+		// add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		// add_action( 'add_meta_boxes', array( $this, 'add_shortcode_meta_box' ) );
+		
 		add_action( 'admin_post_aidc_generate', array( $this, 'handle_generate' ) );
 		add_action( 'wp_ajax_aidc_test_api', array( $this, 'handle_api_test' ) );
-		add_action( 'add_meta_boxes', array( $this, 'add_shortcode_meta_box' ) );
 	}
 
 	/**
@@ -1669,6 +1671,8 @@ add_action( 'plugins_loaded', 'aidc_load_textdomain' );
 /**
  * Display admin notices for the plugin.
  *
+ * Phase 3: Moved to AIDC\Admin\Admin class
+ *
  * @since 1.0.0
  */
 function aidc_admin_notices() {
@@ -1702,4 +1706,5 @@ function aidc_admin_notices() {
 		esc_html( $message )
 	);
 }
-add_action( 'admin_notices', 'aidc_admin_notices' );
+// Phase 3: Moved to AIDC\Admin\Admin class
+// add_action( 'admin_notices', 'aidc_admin_notices' );

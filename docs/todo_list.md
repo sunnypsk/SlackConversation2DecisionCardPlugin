@@ -56,16 +56,16 @@ Acceptance
 
 ---
 
-## Phase 3 — Admin layer (menus, pages, assets, notices)
-- [ ] Create `admin/class-admin-assets.php` to enqueue admin CSS/JS (+ localize).
-- [ ] Create `admin/class-admin.php` for menus: Settings, Generate, Display, Shortcodes, Changelog.
-- [ ] Move admin notices into Admin class.
-- [ ] Extract admin page renders into `admin/views/`: `settings.php`, `generate.php`, `display.php`, `shortcodes-guide.php`, `changelog.php`.
-- [ ] Reuse public views for preview where possible.
+## Phase 3 — Admin layer (menus, pages, assets, notices) ✅ **COMPLETED**
+- [x] Create `admin/class-admin-assets.php` to enqueue admin CSS/JS (+ localize).
+- [x] Create `admin/class-admin.php` for menus: Settings, Generate, Display, Shortcodes, Changelog.
+- [x] Move admin notices into Admin class.
+- [x] Extract admin page renders into `admin/views/`: `settings.php`, `generate.php`, `display.php`, `shortcodes-guide.php`, `changelog.php`.
+- [x] Reuse public views for preview where possible.
 
 Acceptance
-- [ ] All admin screens work and match current UX.
-- [ ] Assets load only on our admin pages.
+- [x] All admin screens work and match current UX.
+- [x] Assets load only on our admin pages.
 
 ---
 
@@ -204,24 +204,24 @@ The steps below specify exactly what to create/change, where to move code from `
   - [x] No duplicate hooks; assets load once.
   - [x] Views contain no business logic.
 
-### Phase 3 — Admin layer (menus, pages, assets, notices)
+### Phase 3 — Admin layer (menus, pages, assets, notices) ✅ **COMPLETED**
 - Create files:
-  - [ ] `admin/class-admin-assets.php` — namespace `AIDC\Admin`; move logic from `AIDC_Plugin::enqueue_admin_assets()` inc. `wp_localize_script`.
-  - [ ] `admin/class-admin.php` — namespace `AIDC\Admin`; registers menus and renders via views (below); move `register_admin_pages()` and `aidc_admin_notices()` behavior here.
-  - [ ] Views under `admin/views/`:
-    - [ ] `settings.php` — form markup; read/write options via provided variables; nonce present.
-    - [ ] `generate.php` — form markup; nonce present; submit to `admin-post.php`.
-    - [ ] `display.php` — admin preview; reuse public render where possible.
-    - [ ] `shortcodes-guide.php` — content moved from `render_shortcodes_page()`.
-    - [ ] `changelog.php` — content moved from `render_changelog_page()`.
+  - [x] `admin/class-admin-assets.php` — namespace `AIDC\Admin`; move logic from `AIDC_Plugin::enqueue_admin_assets()` inc. `wp_localize_script`.
+  - [x] `admin/class-admin.php` — namespace `AIDC\Admin`; registers menus and renders via views (below); move `register_admin_pages()` and `aidc_admin_notices()` behavior here.
+  - [x] Views under `admin/views/`:
+    - [x] `settings.php` — form markup; read/write options via provided variables; nonce present.
+    - [x] `generate.php` — form markup; nonce present; submit to `admin-post.php`.
+    - [x] `display.php` — admin preview; reuse public render where possible.
+    - [x] `shortcodes-guide.php` — content moved from `render_shortcodes_page()`.
+    - [x] `changelog.php` — content moved from `render_changelog_page()`.
 - Wiring:
-  - [ ] In `includes/class-plugin.php::boot()`, instantiate `AdminAssets` and `Admin` only when `is_admin()`.
-  - [ ] In legacy `AIDC_Plugin::init_hooks()`, comment/remove: `admin_menu`, `admin_enqueue_scripts` hooks and associated render methods to avoid duplicates.
+  - [x] In `includes/class-plugin.php::boot()`, instantiate `AdminAssets` and `Admin` only when `is_admin()`.
+  - [x] In legacy `AIDC_Plugin::init_hooks()`, comment/remove: `admin_menu`, `admin_enqueue_scripts` hooks and associated render methods to avoid duplicates.
 - Testing:
-  - [ ] All admin pages render correctly; settings save; localized strings appear.
-  - [ ] Only our admin pages enqueue our assets.
+  - [x] All admin pages render correctly; settings save; localized strings appear.
+  - [x] Only our admin pages enqueue our assets.
 - PR checklist:
-  - [ ] Nonces/capabilities preserved (`manage_options`, `edit_posts`, `read`).
+  - [x] Nonces/capabilities preserved (`manage_options`, `edit_posts`, `read`).
 
 ### Phase 4 — Generator (admin-post) + AI client
 - Create files:

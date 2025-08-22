@@ -68,6 +68,7 @@ class Plugin {
 	 * This method will be used to initialize all plugin functionality.
 	 * Phase 1 adds CPT registration.
 	 * Phase 2 adds Public layer (assets, content filter, shortcodes).
+	 * Phase 3 adds Admin layer (menus, pages, assets, notices).
 	 *
 	 * @since 1.3.0
 	 */
@@ -85,6 +86,15 @@ class Plugin {
 
 		require_once AIDC_PLUGIN_DIR . 'public/class-shortcodes.php';
 		( new \AIDC\PublicUi\Shortcodes() )->register();
+
+		// Phase 3: Register Admin Layer Components (only when in admin)
+		if ( is_admin() ) {
+			require_once AIDC_PLUGIN_DIR . 'admin/class-admin-assets.php';
+			( new \AIDC\Admin\AdminAssets() )->register();
+
+			require_once AIDC_PLUGIN_DIR . 'admin/class-admin.php';
+			( new \AIDC\Admin\Admin() )->register();
+		}
 	}
 
 	/**
