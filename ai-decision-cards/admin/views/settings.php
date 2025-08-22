@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<label for="aidc_api_type"><?php esc_html_e( 'API Type', 'ai-decision-cards' ); ?></label>
 				</th>
 				<td>
-					<select id="aidc_api_type" name="aidc_api_type" onchange="toggleApiFields()">
+					<select id="aidc_api_type" name="aidc_api_type">
 						<option value="openai" <?php selected( $api_type, 'openai' ); ?>>
 							<?php esc_html_e( 'OpenAI Compatible', 'ai-decision-cards' ); ?>
 						</option>
@@ -89,10 +89,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</table>
 		<p class="submit">
 			<?php submit_button( __( 'Save Settings', 'ai-decision-cards' ), 'primary', 'submit', false ); ?>
-			<button type="button" id="aidc_test_api" class="button button-secondary" style="margin-left: 10px;">
+			<button type="button" id="aidc_test_api" class="button button-secondary aidc-test-api-button">
 				<?php esc_html_e( 'Test API Key', 'ai-decision-cards' ); ?>
 			</button>
 		</p>
 	</form>
-	<div id="aidc_test_result" style="margin-top: 15px;"></div>
+	<div id="aidc_test_result" class="aidc-test-result"></div>
 </div>

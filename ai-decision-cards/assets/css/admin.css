@@ -6,3 +6,100 @@
 	border-color:#007cba;
 }
 
+/* Settings page styles */
+.aidc-test-api-button {
+	margin-left: 10px;
+}
+
+.aidc-test-result {
+	margin-top: 15px;
+}
+
+/* Generate page styles */
+.aidc-generate-status {
+	margin-top: 15px;
+	display: none;
+}
+
+/* Shortcode guide styles */
+.aidc-guide-section {
+	background: #f9f9f9;
+	padding: 20px;
+	border-radius: 8px;
+	margin-bottom: 20px;
+}
+
+.aidc-guide-section-alt {
+	background: #f0f8ff;
+	padding: 20px;
+	border-radius: 8px;
+	margin-bottom: 20px;
+}
+
+.aidc-code-examples {
+	background: white;
+	padding: 15px;
+	border-radius: 4px;
+	font-family: monospace;
+	margin: 10px 0;
+}
+
+.aidc-code-line {
+	margin-bottom: 8px;
+}
+
+.aidc-code-comment {
+	color: #666;
+}
+
+.aidc-guide-tip {
+	background: #fff2cc;
+	padding: 15px;
+	border-radius: 8px;
+	border-left: 4px solid #ffcc00;
+}
+
+/* Form field containers */
+.aidc-form-field {
+	margin-bottom: 15px;
+}
+
+.aidc-form-label {
+	font-weight: bold;
+	display: block;
+	margin-bottom: 5px;
+}
+
+.aidc-form-textarea {
+	width: 100%;
+	font-family: monospace;
+	background: #f9f9f9;
+	padding: 5px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+}
+
+.aidc-form-description {
+	margin-top: 5px;
+}
+
+.aidc-user-guide {
+	background: #e7f3ff;
+	padding: 10px;
+	border-radius: 4px;
+	margin-top: 15px;
+}
+
+.aidc-user-guide p {
+	margin: 0;
+	font-size: 12px;
+}
+
+.aidc-shortcode-link {
+	margin-top: 15px;
+}
+
+.aidc-shortcode-link a {
+	text-decoration: none;
+}
+

@@ -21,8 +21,16 @@
 	function initSettingsPage(){
 		var testBtn = qs('#aidc_test_api');
 		var resultDiv = qs('#aidc_test_result');
+		var apiTypeSelect = qs('#aidc_api_type');
 		if(!testBtn) return;
-		document.addEventListener('DOMContentLoaded', toggleApiFields);
+		
+		// Initialize API fields on page load
+		toggleApiFields();
+		
+		// Bind change event to API type select
+		if(apiTypeSelect){
+			apiTypeSelect.addEventListener('change', toggleApiFields);
+		}
 		testBtn.addEventListener('click', function(){
 			var apiType = qs('#aidc_api_type') ? qs('#aidc_api_type').value : 'openai';
 			var apiKey = qs('#aidc_api_key') ? qs('#aidc_api_key').value : '';

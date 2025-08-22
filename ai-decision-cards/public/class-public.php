@@ -79,9 +79,9 @@ class PublicHandler {
 		$owner = $owner ? esc_html( $owner ) : 'TBD';
 		$due = $due ? esc_html( $due ) : 'TBD';
 
-		// Create banner HTML with inline styles for accessibility
+		// Create banner HTML using CSS classes
 		$banner = sprintf(
-			'<div class="aidc-meta-banner" style="background-color: #f9f9f9; border: 1px solid #ddd; padding: 12px 16px; margin-bottom: 20px; font-size: 14px; line-height: 1.4; color: #333;">%s</div>',
+			'<div class="aidc-meta-banner">%s</div>',
 			sprintf(
 				/* translators: %1$s: status, %2$s: owner, %3$s: due date */
 				__( 'Status: %1$s | Owner: %2$s | Target: %3$s', 'ai-decision-cards' ),

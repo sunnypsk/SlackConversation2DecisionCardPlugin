@@ -98,12 +98,12 @@ Acceptance
 
 ---
 
-## Phase 7 — Views tidy-up and styling
-- [ ] Remove stray inline styles from PHP; keep in `assets/css/*`.
-- [ ] Ensure `views/` are presentation-focused; no business logic.
+## Phase 7 — Views tidy-up and styling ✅ **COMPLETED**
+- [x] Remove stray inline styles from PHP; keep in `assets/css/*`.
+- [x] Ensure `views/` are presentation-focused; no business logic.
 
 Acceptance
-- [ ] No unnecessary inline styles remain; accessibility preserved.
+- [x] No unnecessary inline styles remain; accessibility preserved.
 
 ---
 
@@ -260,13 +260,13 @@ The steps below specify exactly what to create/change, where to move code from `
 - Testing:
   - [x] Redirect and option helper behavior unchanged.
 
-### Phase 7 — Views cleanup
+### Phase 7 — Views cleanup ✅ **COMPLETED**
 - Move styling:
-  - [ ] Remove leftover inline `<style>` blocks in PHP pages; ensure `assets/css` has equivalent styles.
+  - [x] Remove leftover inline `<style>` blocks in PHP pages; ensure `assets/css` has equivalent styles.
 - Views discipline:
-  - [ ] Ensure views contain only echo/escape + minimal conditionals; no DB or HTTP calls.
+  - [x] Ensure views contain only echo/escape + minimal conditionals; no DB or HTTP calls.
 - Testing:
-  - [ ] Visual parity (frontend/admin) vs. pre-refactor.
+  - [x] Visual parity (frontend/admin) vs. pre-refactor.
 
 ### Phase 8 — Finalize & switch bootstrap
 - Main file changes (`ai-decision-cards/ai-decision-cards.php`):

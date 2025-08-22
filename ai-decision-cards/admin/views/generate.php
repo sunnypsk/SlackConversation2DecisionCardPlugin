@@ -66,6 +66,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</tr>
 		</table>
 		<?php submit_button( __( 'Generate Summary & Create Draft', 'ai-decision-cards' ), 'primary', 'submit', true, array( 'id' => 'aidc_generate_btn' ) ); ?>
-		<div id="aidc_generate_status" style="margin-top: 15px; display: none;"></div>
+		<div id="aidc_generate_status" class="aidc-generate-status"></div>
 	</form>
 </div>
