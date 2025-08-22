@@ -60,15 +60,8 @@ class AiClient {
 			'messages'    => $messages,
 		);
 
-		// Build endpoint URL - handle both standard OpenAI and services that include /v1/ in base
-		$endpoint_base = rtrim( $endpoint_base, '/' ) . '/';
-		if ( strpos( $endpoint_base, '/v1/' ) !== false ) {
-			// API base already contains v1 (e.g., OpenRouter)
-			$endpoint = $endpoint_base . 'chat/completions';
-		} else {
-			// Standard OpenAI format
-			$endpoint = $endpoint_base . 'v1/chat/completions';
-		}
+		// Build endpoint using shared helper
+		$endpoint = \AIDC\Includes\Helpers::chat_completions_endpoint( $endpoint_base );
 
 		// Build headers
 		$headers = array(

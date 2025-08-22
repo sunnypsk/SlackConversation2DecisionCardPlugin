@@ -53,7 +53,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</th>
 				<td>
 					<input type="password" id="aidc_api_key" name="aidc_api_key" 
-						   value="<?php echo esc_attr( $api_key ); ?>" 
+						   value="<?php echo $api_key; ?>" 
 						   class="regular-text" />
 					<p class="description" id="api_key_desc">
 						<?php esc_html_e( 'Your API key for OpenAI, OpenRouter, or other compatible services.', 'ai-decision-cards' ); ?>
@@ -66,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</th>
 				<td>
 					<input type="text" id="aidc_api_base" name="aidc_api_base" 
-						   value="<?php echo esc_attr( $api_base ); ?>" 
+						   value="<?php echo $api_base; ?>" 
 						   class="regular-text" />
 					<p class="description" id="api_base_desc">
 						<?php esc_html_e( 'Example: https://api.openai.com/ or https://openrouter.ai/api/v1/', 'ai-decision-cards' ); ?>
@@ -79,7 +79,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</th>
 				<td>
 					<input type="text" id="aidc_model" name="aidc_model" 
-						   value="<?php echo esc_attr( $model ); ?>" 
+						   value="<?php echo $model; ?>" 
 						   class="regular-text" />
 					<p class="description" id="model_desc">
 						<?php esc_html_e( 'Example: gpt-3.5-turbo, gpt-4, claude-3-haiku, etc.', 'ai-decision-cards' ); ?>

@@ -677,6 +677,7 @@ class AIDC_Plugin {
 	 * @param string $default  The default value.
 	 * @return string Escaped attribute value.
 	 */
+	// LEGACY: Moved to AIDC\Includes\Helpers::get_option_attr() in Phase 6. Will be removed in Phase 8.
 	private function esc_attr_val( $opt_name, $default = '' ) {
 		return esc_attr( (string) get_option( $opt_name, $default ) );
 	}
@@ -1555,6 +1556,7 @@ Rules:
 	 * @param string $msg  The notice message.
 	 * @param string $type The notice type (success, error, warning, info).
 	 */
+	// LEGACY: Moved to AIDC\Includes\Helpers::redirect_with_notice() in Phase 6. Will be removed in Phase 8.
 	private function redirect_with_notice( $msg, $type = 'success' ) {
 		$url = add_query_arg(
 			array(

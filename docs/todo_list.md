@@ -89,12 +89,12 @@ Acceptance
 
 ---
 
-## Phase 6 — Helpers and shared utilities
-- [ ] Create `includes/class-helpers.php` for small utilities: `redirect_with_notice()`, `esc_attr_val()` (or place where most appropriate).
-- [ ] Avoid bloat; keep helpers minimal and generic.
+## Phase 6 — Helpers and shared utilities ✅ **COMPLETED**
+- [x] Create `includes/class-helpers.php` for small utilities: `redirect_with_notice()`, `get_option_attr()` (renamed from `esc_attr_val`).
+- [x] Avoid bloat; keep helpers minimal and generic.
 
 Acceptance
-- [ ] No duplicated helper code; single, reusable implementations.
+- [x] No duplicated helper code; single, reusable implementations.
 
 ---
 
@@ -249,13 +249,16 @@ The steps below specify exactly what to create/change, where to move code from `
 - PR checklist:
   - [x] Nonce and capability checks intact; JSON structure unchanged.
 
-### Phase 6 — Helpers / shared utilities
+### Phase 6 — Helpers / shared utilities ✅ **COMPLETED**
 - Create file:
-  - [ ] `includes/class-helpers.php` — namespace `AIDC\Includes`; static helpers: `redirect_with_notice( string $msg, string $type='success' )`, `get_option_attr( string $name, string $default='' ): string`.
+  - [x] `includes/class-helpers.php` — namespace `AIDC\Includes`; static helpers: `redirect_with_notice( string $msg, string $type='success' )`, `get_option_attr( string $name, string $default='' ): string`.
 - Refactor:
-  - [ ] Replace legacy utility methods in classes with calls to `Helpers` where appropriate.
+  - [x] Replace legacy utility methods in classes with calls to `Helpers` where appropriate.
+  - [x] Removed duplicate `esc_attr_val()` from `admin/class-admin.php` and `includes/class-generator.php`.
+  - [x] Removed duplicate `redirect_with_notice()` from `includes/class-generator.php`.
+  - [x] Updated all calls to use `\AIDC\Includes\Helpers::` static methods.
 - Testing:
-  - [ ] Redirect and option helper behavior unchanged.
+  - [x] Redirect and option helper behavior unchanged.
 
 ### Phase 7 — Views cleanup
 - Move styling:

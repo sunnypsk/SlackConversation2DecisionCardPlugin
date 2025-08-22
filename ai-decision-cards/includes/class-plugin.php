@@ -74,6 +74,9 @@ class Plugin {
 	 * @since 1.3.0
 	 */
 	public function boot() {
+		// Phase 6: Load shared utility helpers
+		require_once AIDC_PLUGIN_DIR . 'includes/class-helpers.php';
+
 		// Phase 1: Register Custom Post Type and Meta Fields
 		require_once AIDC_PLUGIN_DIR . 'includes/class-cpt.php';
 		( new \AIDC\Includes\Cpt() )->register();

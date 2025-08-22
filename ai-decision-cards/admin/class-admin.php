@@ -135,9 +135,9 @@ class Admin {
 		$view_data = array(
 			'saved' => false,
 			'api_type' => get_option( self::OPTION_API_TYPE, 'openai' ),
-			'api_key' => get_option( self::OPTION_API_KEY, '' ),
-			'api_base' => get_option( self::OPTION_API_BASE, 'https://api.openai.com/' ),
-			'model' => get_option( self::OPTION_MODEL, 'gpt-3.5-turbo' ),
+			'api_key' => \AIDC\Includes\Helpers::get_option_attr( self::OPTION_API_KEY, '' ),
+			'api_base' => \AIDC\Includes\Helpers::get_option_attr( self::OPTION_API_BASE, 'https://api.openai.com/' ),
+			'model' => \AIDC\Includes\Helpers::get_option_attr( self::OPTION_MODEL, 'gpt-3.5-turbo' ),
 		);
 
 		// Handle form submission
@@ -162,9 +162,9 @@ class Admin {
 			$view_data['saved'] = true;
 			// Refresh data after save
 			$view_data['api_type'] = get_option( self::OPTION_API_TYPE, 'openai' );
-			$view_data['api_key'] = get_option( self::OPTION_API_KEY, '' );
-			$view_data['api_base'] = get_option( self::OPTION_API_BASE, 'https://api.openai.com/' );
-			$view_data['model'] = get_option( self::OPTION_MODEL, 'gpt-3.5-turbo' );
+			$view_data['api_key'] = \AIDC\Includes\Helpers::get_option_attr( self::OPTION_API_KEY, '' );
+			$view_data['api_base'] = \AIDC\Includes\Helpers::get_option_attr( self::OPTION_API_BASE, 'https://api.openai.com/' );
+			$view_data['model'] = \AIDC\Includes\Helpers::get_option_attr( self::OPTION_MODEL, 'gpt-3.5-turbo' );
 		}
 
 		// Render view
@@ -347,17 +347,7 @@ class Admin {
 		}
 	}
 
-	/**
-	 * Get escaped attribute value for an option.
-	 *
-	 * @since 1.3.0
-	 * @param string $opt_name The option name.
-	 * @param string $default  The default value.
-	 * @return string Escaped attribute value.
-	 */
-	private function esc_attr_val( $opt_name, $default = '' ) {
-		return esc_attr( (string) get_option( $opt_name, $default ) );
-	}
+	// Note: esc_attr_val() method moved to AIDC\Includes\Helpers::get_option_attr() in Phase 6
 
 	/**
 	 * Ensure a public page exists for Decision Cards Display and return its permalink.

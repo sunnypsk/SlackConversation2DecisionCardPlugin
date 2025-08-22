@@ -91,14 +91,8 @@ class AdminAjax {
 			)
 		);
 		
-		// Build endpoint and headers for OpenAI Compatible format
-		if ( strpos( $api_base, '/v1/' ) !== false ) {
-			// API base already contains v1 (e.g., OpenRouter)
-			$endpoint = $api_base . 'chat/completions';
-		} else {
-			// Standard OpenAI format
-			$endpoint = $api_base . 'v1/chat/completions';
-		}
+		// Build endpoint using shared helper
+		$endpoint = \AIDC\Includes\Helpers::chat_completions_endpoint( $api_base );
 		$headers = array(
 			'Authorization' => 'Bearer ' . $api_key,
 			'Content-Type' => 'application/json'

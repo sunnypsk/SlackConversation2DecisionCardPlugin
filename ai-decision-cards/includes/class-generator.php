@@ -87,7 +87,7 @@ class Generator {
 
 		// Validate required conversation input
 		if ( $conversation === '' ) {
-			$this->redirect_with_notice( __( 'Please paste a conversation before generating.', 'ai-decision-cards' ), 'error' );
+			\AIDC\Includes\Helpers::redirect_with_notice( __( 'Please paste a conversation before generating.', 'ai-decision-cards' ), 'error' );
 			return;
 		}
 
@@ -99,7 +99,7 @@ class Generator {
 
 		// Validate API key is configured
 		if ( ! $api_key ) {
-			$this->redirect_with_notice( __( 'Missing API key. Set it in Settings.', 'ai-decision-cards' ), 'error' );
+			\AIDC\Includes\Helpers::redirect_with_notice( __( 'Missing API key. Set it in Settings.', 'ai-decision-cards' ), 'error' );
 			return;
 		}
 
@@ -117,7 +117,7 @@ class Generator {
 
 		// Handle API errors
 		if ( is_wp_error( $response ) ) {
-			$this->redirect_with_notice( $response->get_error_message(), 'error' );
+			\AIDC\Includes\Helpers::redirect_with_notice( $response->get_error_message(), 'error' );
 			return;
 		}
 
@@ -152,7 +152,7 @@ class Generator {
 
 		// Handle post creation errors
 		if ( is_wp_error( $post_id ) ) {
-			$this->redirect_with_notice( __( 'Failed to create post: ', 'ai-decision-cards' ) . $post_id->get_error_message(), 'error' );
+			\AIDC\Includes\Helpers::redirect_with_notice( __( 'Failed to create post: ', 'ai-decision-cards' ) . $post_id->get_error_message(), 'error' );
 			return;
 		}
 
@@ -169,7 +169,7 @@ class Generator {
 		}
 
 		// Fallback success message
-		$this->redirect_with_notice( sprintf( __( 'Draft created (ID %d).', 'ai-decision-cards' ), intval( $post_id ) ), 'success' );
+		\AIDC\Includes\Helpers::redirect_with_notice( sprintf( __( 'Draft created (ID %d).', 'ai-decision-cards' ), intval( $post_id ) ), 'success' );
 	}
 
 	/**
@@ -213,24 +213,5 @@ Rules:
 - Use proper HTML tags: h2 for sections, ul/li for lists, p for paragraphs, strong for emphasis, blockquote for quotes.";
 	}
 
-	/**
-	 * Redirect with admin notice after generation attempt.
-	 *
-	 * @since 1.3.0
-	 *
-	 * @param string $message The notice message.
-	 * @param string $type    The notice type (success, error, warning, info).
-	 */
-	private function redirect_with_notice( $message, $type = 'success' ) {
-		$url = add_query_arg(
-			array(
-				'page'        => 'aidc_generate',
-				'aidc_notice' => rawurlencode( $message ),
-				'aidc_type'   => $type,
-			),
-			admin_url( 'edit.php?post_type=decision_card' )
-		);
-		wp_safe_redirect( $url );
-		exit;
-	}
+	// Note: redirect_with_notice() method moved to AIDC\Includes\Helpers in Phase 6
 }
