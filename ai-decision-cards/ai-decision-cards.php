@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: AI Decision Cards
- * Plugin URI: https://github.com/sunnypoon/SlackConversation2DecisionCardPlugin
+ * Plugin URI: https://github.com/sunnypsk/SlackConversaton2DecisionCardPlugin
  * Description: Convert Slack-style conversations into AI-generated Decision Cards with summaries and action items using OpenAI-compatible APIs.
  * Version: 1.3.0
  * Author: Sunny Poon

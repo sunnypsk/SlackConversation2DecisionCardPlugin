@@ -203,7 +203,7 @@ This plugin follows WordPress coding standards and best practices:
 
 ## Support
 
-For issues, feature requests, or contributions, please visit the [project repository](https://github.com/sunnypoon/SlackConversation2DecisionCardPlugin).
+For issues, feature requests, or contributions, please visit the [project repository](https://github.com/sunnypsk/SlackConversaton2DecisionCardPlugin).
 
 ## License
 

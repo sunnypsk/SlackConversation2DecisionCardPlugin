@@ -49,12 +49,11 @@ class Activator {
 			update_option( 'aidc_openai_model', 'gpt-3.5-turbo' );
 		}
 
-		// Register CPT and flush rewrite rules
-		// We need to load CPT class to register the post type before flushing
-		require_once AIDC_PLUGIN_DIR . 'includes/class-cpt.php';
-		( new \AIDC\Includes\Cpt() )->register_cpt();
-		( new \AIDC\Includes\Cpt() )->register_meta_fields();
-		
+			// Register CPT and flush rewrite rules
+			// We need to load CPT class to register the post type before flushing
+			require_once AIDC_PLUGIN_DIR . 'includes/class-cpt.php';
+			( new \AIDC\Includes\Cpt() )->register_cpt();
+			
 		// Flush rewrite rules to ensure CPT permalinks work
 		flush_rewrite_rules( false );
 	}
