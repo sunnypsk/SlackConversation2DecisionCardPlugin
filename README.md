@@ -9,7 +9,7 @@ This project implements a WordPress plugin that helps teams document important d
 ## 📁 Project Structure
 
 ```
-SlackConversaton2DecisionCardPlugin/
+SlackConversation2DecisionCardPlugin/
 ├── ai-decision-cards/              # Main WordPress plugin directory (v1.3.0 modular architecture)
 │   ├── admin/                      # Admin interface classes and views
 │   │   ├── class-admin.php         # Main admin class (menus, pages)
@@ -90,7 +90,14 @@ SlackConversaton2DecisionCardPlugin/
 - **🔌 Multiple AI Providers**: Supports OpenAI and OpenAI-compatible APIs (OpenRouter)
 - **📝 Draft Workflow**: Generated cards saved as drafts for review and editing
 
-## 🎉 Latest Updates (v1.2.1 - Current Version)
+## 🎉 Latest Updates (v1.3.0 - Current Version)
+
+### v1.3.0
+- Refactor: Modular architecture with central `Plugin` orchestrator
+- Refactor: Extracted admin/public/generator/helpers into dedicated classes and views
+- Refactor: Moved activation/deactivation into `Activator`/`Deactivator`; finalized bootstrap via `plugins_loaded`
+- UI: Views cleaned up; assets moved to `assets/`; admin display previews via shortcode
+- Fix: Avoid duplicated hooks; shared endpoint helper for OpenAI‑compatible services
 
 ### v1.2.1
 - Internationalization: Text domain loaded and `.pot` template prepared for translators
