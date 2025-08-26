@@ -1,6 +1,6 @@
 # Slack Conversation to Decision Card Plugin
 
-A WordPress plugin that converts Slack-style conversations into AI-generated Decision Cards using OpenAI-compatible APIs.
+**Current Version: v1.3.0** | A WordPress plugin that converts Slack-style conversations into AI-generated Decision Cards using OpenAI-compatible APIs.
 
 ## 🎯 Project Overview
 
@@ -10,14 +10,53 @@ This project implements a WordPress plugin that helps teams document important d
 
 ```
 SlackConversaton2DecisionCardPlugin/
-├── ai-decision-cards/          # Main WordPress plugin directory
-│   ├── ai-decision-cards.php   # Primary plugin file
-│   └── readme.md              # Plugin-specific documentation
-├── docs/                      # Project documentation
-│   └── prd.md                # Product Requirements Document
-├── CLAUDE.md                 # Development guidelines and instructions
-├── CLAUDE.local.md           # Local development preferences
-└── docker-compose.yml        # Docker development environment
+├── ai-decision-cards/              # Main WordPress plugin directory (v1.3.0 modular architecture)
+│   ├── admin/                      # Admin interface classes and views
+│   │   ├── class-admin.php         # Main admin class (menus, pages)
+│   │   ├── class-admin-ajax.php    # AJAX handlers
+│   │   ├── class-admin-assets.php  # Admin asset management
+│   │   └── views/                  # Admin view templates
+│   │       ├── settings.php        # Settings page template
+│   │       ├── generate.php        # Generate Decision Card form
+│   │       ├── display.php         # Admin preview display
+│   │       ├── shortcodes-guide.php # Shortcode documentation
+│   │       └── changelog.php       # Version changelog
+│   ├── assets/                     # CSS and JavaScript assets
+│   │   ├── css/
+│   │   │   ├── admin.css          # Admin styling
+│   │   │   └── public.css         # Public/frontend styling
+│   │   └── js/
+│   │       ├── admin.js           # Admin JavaScript
+│   │       └── public.js          # Public JavaScript
+│   ├── includes/                   # Core plugin classes
+│   │   ├── class-plugin.php        # Main plugin orchestrator (singleton)
+│   │   ├── class-cpt.php          # Custom post type registration
+│   │   ├── class-ai-client.php    # OpenAI API client
+│   │   ├── class-generator.php    # Decision Card generation logic
+│   │   ├── class-helpers.php      # Shared utility functions
+│   │   ├── class-activator.php    # Plugin activation handler
+│   │   ├── class-deactivator.php  # Plugin deactivation handler
+│   │   └── class-i18n.php         # Internationalization loader
+│   ├── languages/                  # Translation files
+│   │   ├── ai-decision-cards.pot  # Translation template
+│   │   └── ai-decision-cards-zh_HK.po # Chinese (Hong Kong) translation
+│   ├── public/                     # Public/frontend classes and views
+│   │   ├── class-public.php        # Public functionality (meta banner, page creation)
+│   │   ├── class-public-assets.php # Public asset management
+│   │   ├── class-shortcodes.php   # Shortcode rendering
+│   │   └── views/                  # Public view templates
+│   │       ├── shortcode-list.php  # Decision Cards list display
+│   │       └── shortcode-single.php # Single Decision Card display
+│   ├── ai-decision-cards.php       # Main plugin file (v1.3.0 bootstrap)
+│   ├── readme.md                   # Plugin-specific documentation
+│   └── uninstall.php              # Cleanup on plugin removal
+├── docs/                          # Project documentation
+│   ├── prd.md                     # Product Requirements Document
+│   └── todo_list.md               # v1.3.0 modularization plan & progress
+├── CLAUDE.md                      # Development guidelines and instructions
+├── CLAUDE.local.md               # Local development preferences
+├── README.md                     # This file - project overview
+└── docker-compose.yml           # Docker development environment
 ```
 
 ## 🚀 Quick Start
