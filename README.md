@@ -92,45 +92,31 @@ SlackConversation2DecisionCardPlugin/
 
 ## 📸 Screenshots
 
-### Admin Interface & Setup
-<img src="ai-decision-cards/assets/screenshots/admin-settings-configuration.png" alt="Settings Configuration" width="600">
+### Admin Interface & Configuration
 
-*Configure your AI service provider with API keys and model settings*
+| Settings Configuration | Generate Decision Card |
+|------------------------|------------------------|
+| <img src="ai-decision-cards/assets/screenshots/admin-settings-configuration.png" alt="Settings Configuration" width="400"><br>*Configure your AI service provider with API keys and model settings* | <img src="ai-decision-cards/assets/screenshots/admin-generate-conversation-input.png" alt="Generate Decision Card" width="400"><br>*Simple form interface for inputting Slack conversations with metadata fields* |
 
-<img src="ai-decision-cards/assets/screenshots/admin-generate-conversation-input.png" alt="Generate Decision Card" width="600">
+| Enhanced Conversation Input | WordPress Editor View |
+|-----------------------------|------------------------|
+| <img src="ai-decision-cards/assets/screenshots/admin-generate-detailed-conversation.png" alt="Detailed Conversation Input" width="400"><br>*Enhanced conversation input with comprehensive metadata configuration* | <img src="ai-decision-cards/assets/screenshots/admin-editor-decision-card-structure.png" alt="WordPress Editor View" width="400"><br>*Complete Decision Card in WordPress editor showing the structured 5-section format with embedded shortcode helper* |
 
-*Simple form interface for inputting Slack conversations with metadata fields*
+### Decision Card Display & User Experience
 
-<img src="ai-decision-cards/assets/screenshots/admin-generate-detailed-conversation.png" alt="Detailed Conversation Input" width="600">
+| Single Decision Card View | Public Display Page |
+|---------------------------|---------------------|
+| <img src="ai-decision-cards/assets/screenshots/public-single-decision-card-view.png" alt="Single Decision Card View" width="400"><br>*Frontend view of a complete Decision Card showing the structured 5-section format with meta banner* | <img src="ai-decision-cards/assets/screenshots/public-display-page-with-filters.png" alt="Public Display Page" width="400"><br>*Public-facing Decision Cards display with search and filtering capabilities* |
 
-*Enhanced conversation input with comprehensive metadata configuration*
-
-### Decision Card Structure & Editing
-<img src="ai-decision-cards/assets/screenshots/admin-editor-decision-card-structure.png" alt="WordPress Editor View" width="600">
-
-*Complete Decision Card in WordPress editor showing the structured 5-section format with embedded shortcode helper*
-
-<img src="ai-decision-cards/assets/screenshots/public-single-decision-card-view.png" alt="Single Decision Card View" width="600">
-
-*Frontend view of a complete Decision Card showing the structured 5-section format with meta banner*
-
-### Public Display & User Experience
-<img src="ai-decision-cards/assets/screenshots/public-display-page-with-filters.png" alt="Public Display Page" width="600">
-
-*Public-facing Decision Cards display with search and filtering capabilities*
-
-<img src="ai-decision-cards/assets/screenshots/public-decision-cards-grid-responsive.png" alt="Decision Cards Grid" width="600">
-
-*Responsive grid layout showing multiple Decision Cards with status indicators*
-
-<img src="ai-decision-cards/assets/screenshots/public-mobile-friendly-display.png" alt="Mobile-Friendly View" width="400">
-
-*Mobile-optimized display ensuring accessibility across all devices*
+| Responsive Grid Layout | Mobile-Friendly Display |
+|------------------------|-------------------------|
+| <img src="ai-decision-cards/assets/screenshots/public-decision-cards-grid-responsive.png" alt="Decision Cards Grid" width="400"><br>*Responsive grid layout showing multiple Decision Cards with status indicators* | <img src="ai-decision-cards/assets/screenshots/public-mobile-friendly-display.png" alt="Mobile-Friendly View" width="400"><br>*Mobile-optimized display ensuring accessibility across all devices* |
 
 ### Documentation & User Guidance
-<img src="ai-decision-cards/assets/screenshots/admin-shortcode-usage-guide.png" alt="Shortcode Usage Guide" width="600">
 
-*Built-in documentation with comprehensive shortcode parameters and examples*
+| Shortcode Usage Guide |
+|-----------------------|
+| <img src="ai-decision-cards/assets/screenshots/admin-shortcode-usage-guide.png" alt="Shortcode Usage Guide" width="400"><br>*Built-in documentation with comprehensive shortcode parameters and examples* |
 
 ## 🎉 Latest Updates (v1.3.0 - Current Version)
 
