@@ -59,6 +59,10 @@ class AdminAjax {
 		// Get form data
 		$api_type = isset( $_POST['api_type'] ) ? sanitize_text_field( $_POST['api_type'] ) : 'openai';
 		$api_key = isset( $_POST['api_key'] ) ? sanitize_text_field( $_POST['api_key'] ) : '';
+		// If no API key provided in the request, fall back to the stored option.
+		if ( empty( $api_key ) ) {
+			$api_key = (string) get_option( \AIDC\Admin\Admin::OPTION_API_KEY );
+		}
 		$api_base = isset( $_POST['api_base'] ) ? sanitize_text_field( $_POST['api_base'] ) : '';
 		$model = isset( $_POST['model'] ) ? sanitize_text_field( $_POST['model'] ) : '';
 		
