@@ -52,11 +52,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<label for="aidc_api_key"><span id="api_key_label"><?php esc_html_e( 'API Key', 'ai-decision-cards' ); ?></span></label>
 				</th>
 				<td>
-					<input type="password" id="aidc_api_key" name="aidc_api_key" 
-						   value="<?php echo $api_key; ?>" 
-						   class="regular-text" />
+					<input type="password" id="aidc_api_key" name="aidc_api_key"
+					       value=""
+					       placeholder="••••••"
+					       autocomplete="new-password"
+					       class="regular-text" />
 					<p class="description" id="api_key_desc">
 						<?php esc_html_e( 'Your API key for OpenAI, OpenRouter, or other compatible services.', 'ai-decision-cards' ); ?>
+						<br />
+						<?php esc_html_e( 'For security, the saved key is not shown. Leave this field blank to keep your existing key.', 'ai-decision-cards' ); ?>
 					</p>
 				</td>
 			</tr>

@@ -4,14 +4,13 @@
 
 	function toggleApiFields(){
 		var apiKeyLabel = qs('#api_key_label');
-		var apiKeyDesc = qs('#api_key_desc');
 		var apiBaseLabel = qs('#api_base_label');
 		var apiBaseDesc = qs('#api_base_desc');
 		var modelLabel = qs('#model_label');
 		var modelDesc = qs('#model_desc');
 		if(!apiKeyLabel) return;
+		// Keep server-rendered descriptions intact (avoid overwriting additional security notes)
 		apiKeyLabel.textContent = 'API Key';
-		if(apiKeyDesc) apiKeyDesc.textContent = 'Your API key for OpenAI, OpenRouter, or other compatible services.';
 		if(apiBaseLabel) apiBaseLabel.textContent = 'API Base URL';
 		if(apiBaseDesc) apiBaseDesc.textContent = 'Example: https://api.openai.com/ or https://openrouter.ai/api/v1/';
 		if(modelLabel) modelLabel.textContent = 'Model';
@@ -31,15 +30,12 @@
 		if(apiTypeSelect){
 			apiTypeSelect.addEventListener('change', toggleApiFields);
 		}
-		testBtn.addEventListener('click', function(){
+			testBtn.addEventListener('click', function(){
 			var apiType = qs('#aidc_api_type') ? qs('#aidc_api_type').value : 'openai';
 			var apiKey = qs('#aidc_api_key') ? qs('#aidc_api_key').value : '';
 			var apiBase = qs('#aidc_api_base') ? qs('#aidc_api_base').value : '';
 			var model = qs('#aidc_model') ? qs('#aidc_model').value : '';
-			if(!apiKey.trim()){
-				if(resultDiv){ resultDiv.innerHTML = '<div class="notice notice-error"><p>'+ (aidcAdmin && aidcAdmin.i18n ? aidcAdmin.i18n.pleaseEnterKey : 'Please enter an API key first.') +'</p></div>'; }
-				return;
-			}
+			// Allow empty apiKey here; server will fall back to stored key if available.
 			testBtn.disabled = true;
 			testBtn.textContent = (aidcAdmin && aidcAdmin.i18n ? aidcAdmin.i18n.testing : 'Testing...');
 			if(resultDiv){ resultDiv.innerHTML = '<div class="notice notice-info"><p>'+ (aidcAdmin && aidcAdmin.i18n ? aidcAdmin.i18n.testingConnection : 'Testing API connection...') +'</p></div>'; }

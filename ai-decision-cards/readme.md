@@ -72,10 +72,17 @@ Transform your team's conversation transcripts into professional Decision Cards 
 1. Navigate to **Decision Cards → Settings** in your WordPress admin
 2. Configure your API settings:
    - **API Type**: Choose between OpenAI or OpenAI Compatible
-   - **API Key**: Enter your OpenAI API key (required)
+   - **API Key**: Enter your OpenAI API key (required). For security, the saved key is never shown on the page; the field stays blank with a placeholder. Leave it blank to keep your existing key unchanged.
    - **API Base URL**: Default is `https://api.openai.com/` (change for OpenRouter or other services)
    - **Model**: Default is `gpt-3.5-turbo` (can use `gpt-4` or other chat models)
-3. Test your API connection using the built-in test feature
+   3. Test your API connection using the built-in test feature
+
+### Security: API Key Handling
+
+- The API key field on the Settings page never repopulates with the stored value; it shows a neutral placeholder only.
+- Saving an empty API key leaves the existing stored key unchanged.
+- When a new (non-empty) key is submitted, it overwrites the stored key and is saved with autoload disabled to avoid being loaded into memory on every request.
+- The “Test API Key” button will use the typed value when provided; if left blank, it securely uses the currently stored key for testing.
 
 ## Usage
 
@@ -162,6 +169,12 @@ This plugin follows WordPress coding standards and best practices:
 - Responsive CSS design principles
 
 ## Changelog
+
+### 1.3.1
+- Security: API key is no longer repopulated in the Settings UI; the field remains blank with a neutral placeholder.
+- Security: Saving a blank API key keeps the existing key unchanged; new keys are saved with autoload disabled.
+- UX: “Test API Key” uses the entered value when provided, otherwise securely falls back to the stored key.
+- DX: Switched asset versioning to file modification time (per-file) to reduce cache issues in admin and public assets.
 
 ### 1.3.0
 - Refactor: Switched to modular architecture with a central `Plugin` orchestrator

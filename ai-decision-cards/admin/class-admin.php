@@ -133,11 +133,12 @@ class Admin {
 
 		// Prepare data for the view
 		$view_data = array(
-			'saved' => false,
-			'api_type' => get_option( self::OPTION_API_TYPE, 'openai' ),
-			'api_key' => \AIDC\Includes\Helpers::get_option_attr( self::OPTION_API_KEY, '' ),
-			'api_base' => \AIDC\Includes\Helpers::get_option_attr( self::OPTION_API_BASE, 'https://api.openai.com/' ),
-			'model' => \AIDC\Includes\Helpers::get_option_attr( self::OPTION_MODEL, 'gpt-3.5-turbo' ),
+			'saved'   => false,
+			'api_type'=> get_option( self::OPTION_API_TYPE, 'openai' ),
+			// Do not expose stored API key back into the DOM
+			'api_key' => '',
+			'api_base'=> \AIDC\Includes\Helpers::get_option_attr( self::OPTION_API_BASE, 'https://api.openai.com/' ),
+			'model'   => \AIDC\Includes\Helpers::get_option_attr( self::OPTION_MODEL, 'gpt-3.5-turbo' ),
 		);
 
 		// Handle form submission
@@ -146,7 +147,12 @@ class Admin {
 				update_option( self::OPTION_API_TYPE, sanitize_text_field( wp_unslash( $_POST['aidc_api_type'] ) ) );
 			}
 			if ( isset( $_POST['aidc_api_key'] ) ) {
-				update_option( self::OPTION_API_KEY, sanitize_text_field( wp_unslash( $_POST['aidc_api_key'] ) ) );
+				$maybe_key = trim( sanitize_text_field( wp_unslash( $_POST['aidc_api_key'] ) ) );
+				// Only overwrite stored key when a non-empty value is submitted.
+				if ( '' !== $maybe_key ) {
+					// Ensure the option is stored without autoloading for security.
+					update_option( self::OPTION_API_KEY, $maybe_key, 'no' );
+				}
 			}
 			if ( isset( $_POST['aidc_api_base'] ) ) {
 				$base = trim( sanitize_text_field( wp_unslash( $_POST['aidc_api_base'] ) ) );
@@ -162,9 +168,10 @@ class Admin {
 			$view_data['saved'] = true;
 			// Refresh data after save
 			$view_data['api_type'] = get_option( self::OPTION_API_TYPE, 'openai' );
-			$view_data['api_key'] = \AIDC\Includes\Helpers::get_option_attr( self::OPTION_API_KEY, '' );
+			// Keep API key field empty after save; never repopulate with stored value.
+			$view_data['api_key']  = '';
 			$view_data['api_base'] = \AIDC\Includes\Helpers::get_option_attr( self::OPTION_API_BASE, 'https://api.openai.com/' );
-			$view_data['model'] = \AIDC\Includes\Helpers::get_option_attr( self::OPTION_MODEL, 'gpt-3.5-turbo' );
+			$view_data['model']    = \AIDC\Includes\Helpers::get_option_attr( self::OPTION_MODEL, 'gpt-3.5-turbo' );
 		}
 
 		// Render view

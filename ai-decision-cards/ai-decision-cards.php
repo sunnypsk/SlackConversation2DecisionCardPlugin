@@ -3,7 +3,7 @@
  * Plugin Name: AI Decision Cards
  * Plugin URI: https://github.com/sunnypsk/SlackConversation2DecisionCardPlugin
  * Description: Convert Slack-style conversations into AI-generated Decision Cards with summaries and action items using OpenAI-compatible APIs.
- * Version: 1.3.0
+ * Version: 1.3.1
  * Author: Sunny Poon
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants.
-define( 'AIDC_VERSION', '1.3.0' );
+define( 'AIDC_VERSION', '1.3.1' );
 define( 'AIDC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AIDC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'AIDC_PLUGIN_FILE', __FILE__ );

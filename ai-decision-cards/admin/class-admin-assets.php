@@ -64,24 +64,32 @@ class AdminAssets {
 		);
 		
 		if ( in_array( $screen->id, $target_pages, true ) ) {
+			$base_url  = plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/';
+			$base_path = plugin_dir_path( AIDC_PLUGIN_FILE ) . 'assets/';
+			
+			$ver_public_css = file_exists( $base_path . 'css/public.css' ) ? filemtime( $base_path . 'css/public.css' ) : AIDC_VERSION;
+			$ver_admin_css  = file_exists( $base_path . 'css/admin.css' ) ? filemtime( $base_path . 'css/admin.css' ) : AIDC_VERSION;
+			$ver_admin_js   = file_exists( $base_path . 'js/admin.js' ) ? filemtime( $base_path . 'js/admin.js' ) : AIDC_VERSION;
+			$ver_public_js  = file_exists( $base_path . 'js/public.js' ) ? filemtime( $base_path . 'js/public.js' ) : AIDC_VERSION;
+
 			// Public styles are also needed for previewing display inside admin
 			wp_enqueue_style(
 				'aidc-public',
-				plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/css/public.css',
+				$base_url . 'css/public.css',
 				array(),
-				AIDC_VERSION
+				$ver_public_css
 			);
 			wp_enqueue_style(
 				'aidc-admin',
-				plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/css/admin.css',
+				$base_url . 'css/admin.css',
 				array(),
-				AIDC_VERSION
+				$ver_admin_css
 			);
 			wp_enqueue_script(
 				'aidc-admin',
-				plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/js/admin.js',
+				$base_url . 'js/admin.js',
 				array( 'jquery' ),
-				AIDC_VERSION,
+				$ver_admin_js,
 				true
 			);
 
@@ -89,9 +97,9 @@ class AdminAssets {
 			if ( in_array( $screen->id, array( 'decision_card_page_aidc_display', 'toplevel_page_decision-cards-display' ), true ) ) {
 				wp_enqueue_script(
 					'aidc-public',
-					plugin_dir_url( AIDC_PLUGIN_FILE ) . 'assets/js/public.js',
+					$base_url . 'js/public.js',
 					array(),
-					AIDC_VERSION,
+					$ver_public_js,
 					true
 				);
 			}

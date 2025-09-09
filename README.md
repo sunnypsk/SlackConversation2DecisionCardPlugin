@@ -152,6 +152,12 @@ SlackConversation2DecisionCardPlugin/
 - **Product Requirements**: Complete specifications in `docs/prd.md`
 - **Development Guidelines**: Project standards and practices in `CLAUDE.md`
 
+## 🔒 Security Notes
+
+- The plugin does not render the stored API key back into the Settings UI. The API key field stays blank with a neutral placeholder.
+- Submitting an empty API key keeps the existing key unchanged; submitting a non‑empty key overwrites the stored key.
+- New API keys are saved with autoload disabled to minimize exposure and memory footprint.
+
 ## 🛠️ Development
 
 This is a 1-week MVP build following WordPress plugin development standards:
